@@ -1,0 +1,43 @@
+{
+  "info": { "name": "socar", "date_created": "03/08/2022" },
+  "images": {
+    "id": 1,
+    "width": 1280,
+    "height": 622,
+    "file_name": "0009062_sc-200552.jpg"
+  },
+  "annotations": [
+    {
+      "id": 2,
+      "image_id": 1,
+      "category_id": "sc-200552",
+      "segmentation": [
+        [
+          [
+            [333, 107],
+            [616, 103],
+            [616, 127],
+            [467, 151],
+            [361, 209],
+            [301, 310],
+            [305, 389],
+            [264, 387],
+            [201, 357],
+            [215, 234],
+            [281, 144],
+            [333, 107]
+          ]
+        ]
+      ],
+      "area": 40455.0,
+      "bbox": [201, 103, 415, 286],
+      "damage": "Scratched",
+      "part": null,
+      "year": 2017,
+      "color": "White",
+      "level": null,
+      "repair": []
+    }
+  ],
+  "categories": { "id": "sc-200552", "supercategory_name": "Compact car" }
+}

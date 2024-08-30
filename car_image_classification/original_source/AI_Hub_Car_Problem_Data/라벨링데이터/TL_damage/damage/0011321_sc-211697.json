@@ -1,0 +1,44 @@
+{
+  "info": { "name": "socar", "date_created": "03/08/2022" },
+  "images": {
+    "id": 1,
+    "width": 960,
+    "height": 1280,
+    "file_name": "0011321_sc-211697.jpg"
+  },
+  "annotations": [
+    {
+      "id": 2,
+      "image_id": 1,
+      "category_id": "sc-211697",
+      "segmentation": [
+        [
+          [
+            [226, 820],
+            [274, 811],
+            [314, 823],
+            [371, 821],
+            [393, 806],
+            [426, 807],
+            [422, 824],
+            [405, 837],
+            [366, 841],
+            [314, 845],
+            [264, 842],
+            [231, 829],
+            [226, 820]
+          ]
+        ]
+      ],
+      "area": 4617.0,
+      "bbox": [226, 806, 200, 39],
+      "damage": "Breakage",
+      "part": null,
+      "year": 2017,
+      "color": "White",
+      "level": null,
+      "repair": []
+    }
+  ],
+  "categories": { "id": "sc-211697", "supercategory_name": "Mid-size car" }
+}

@@ -1,0 +1,45 @@
+{
+  "info": { "name": "socar", "date_created": "03/08/2022" },
+  "images": {
+    "id": 1,
+    "width": 960,
+    "height": 720,
+    "file_name": "0000459_sc-226797.jpg"
+  },
+  "annotations": [
+    {
+      "id": 2,
+      "image_id": 1,
+      "category_id": "sc-226797",
+      "segmentation": [
+        [
+          [
+            [3, 360],
+            [342, 374],
+            [548, 379],
+            [746, 375],
+            [960, 363],
+            [946, 377],
+            [865, 387],
+            [734, 396],
+            [710, 396],
+            [480, 399],
+            [226, 396],
+            [58, 379],
+            [5, 374],
+            [3, 360]
+          ]
+        ]
+      ],
+      "area": 19507.0,
+      "bbox": [3, 360, 957, 39],
+      "damage": "Separated",
+      "part": null,
+      "year": 2018,
+      "color": "White",
+      "level": null,
+      "repair": []
+    }
+  ],
+  "categories": { "id": "sc-226797", "supercategory_name": "Full-size car" }
+}

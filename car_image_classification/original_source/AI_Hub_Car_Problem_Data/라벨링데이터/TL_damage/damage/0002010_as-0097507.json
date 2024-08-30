@@ -1,0 +1,47 @@
+{
+  "info": { "name": "external", "date_created": "03/08/2022" },
+  "images": {
+    "id": 1,
+    "width": 800,
+    "height": 1067,
+    "file_name": "0002010_as-0097507.jpg"
+  },
+  "annotations": [
+    {
+      "id": 2,
+      "image_id": 1,
+      "category_id": "as-0097507",
+      "segmentation": [
+        [
+          [
+            [590, 508],
+            [645, 501],
+            [665, 512],
+            [690, 511],
+            [724, 511],
+            [736, 525],
+            [708, 540],
+            [667, 541],
+            [623, 526],
+            [604, 529],
+            [592, 547],
+            [588, 562],
+            [575, 578],
+            [571, 564],
+            [583, 539],
+            [590, 508]
+          ]
+        ]
+      ],
+      "area": 4397.5,
+      "bbox": [571, 501, 165, 77],
+      "damage": "Scratched",
+      "part": null,
+      "year": 2016,
+      "color": "Black",
+      "level": null,
+      "repair": ["Rear bumper:coating,repair"]
+    }
+  ],
+  "categories": { "id": "as-0097507", "supercategory_name": "Mid-size car" }
+}

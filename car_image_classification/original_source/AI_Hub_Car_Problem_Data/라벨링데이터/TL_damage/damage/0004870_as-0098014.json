@@ -1,0 +1,39 @@
+{
+  "info": { "name": "external", "date_created": "04/20/2022" },
+  "images": {
+    "id": 1,
+    "width": 800,
+    "height": 1067,
+    "file_name": "0004870_as-0098014.jpg"
+  },
+  "annotations": [
+    {
+      "id": 2,
+      "image_id": 1,
+      "category_id": "as-0098014",
+      "segmentation": [
+        [
+          [
+            [689, 636],
+            [686, 634],
+            [718, 653],
+            [723, 668],
+            [710, 676],
+            [670, 680],
+            [656, 665],
+            [689, 636]
+          ]
+        ]
+      ],
+      "area": 1815.0,
+      "bbox": [656, 634, 67, 46],
+      "damage": "Crushed",
+      "part": null,
+      "year": 2014,
+      "color": "Black",
+      "level": null,
+      "repair": ["Rear bumper:coating,exchange"]
+    }
+  ],
+  "categories": { "id": "as-0098014", "supercategory_name": "Full-size car" }
+}
