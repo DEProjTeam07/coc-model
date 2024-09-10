@@ -9,8 +9,6 @@ dataset = S3ImageDatasets(bucket_name=AWS_BUCKET_NAME,usage='train')
 
 train_loader = DataLoader(dataset, batch_size=16, shuffle=True)
 
-print(train_loader)
-
 # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # model = model.to(device)
 
