@@ -33,10 +33,10 @@ train_accuracies = []
 test_accuracies = []
 
 trained_model = train_model(model=model, device=device, criterion=criterion, optimizer=optimizer, train_loader=train_loader,
-            test_loader=test_loader, save_file='/home/ubuntu/model_registry/EffiB1.pth')
+            test_loader=test_loader, save_file='/home/ubuntu/modeling/seowoo/coc-model/model_registry/EffiB1.pth')
 
 #학습된 모델 로드
-model.load_state_dict(torch.load('/home/ubuntu/model_registry/EffiB1.pth', map_location=device))
+model.load_state_dict(torch.load('/home/ubuntu/modeling/seowoo/coc-model/model_registry/EffiB1.pth', map_location=device))
 model = model.to(device)
 model.eval()
 #추론할 데이터셋 설정 : 로컬에 저장된 폴더를 사용합니다
