@@ -8,7 +8,7 @@ from src.models.Efficientnets import Efficientnets
 from src.TrainValidateEvaluation import train_model
 from src.Inference import infer_images_in_folder, save_to_parquet
 
-AWS_BUCKET_NAME = 'deprojteam07-labeledrawdata'
+AWS_BUCKET_NAME = 'bucket-name-here...'
 
 #학습 및 평가용 데이터셋 로드
 train_dataset = S3ImageDatasets(bucket_name=AWS_BUCKET_NAME,version='split_1',usage='train')
