@@ -14,7 +14,7 @@ class S3ImageDatasets(Dataset):
         #이미지 변환 형태 지정
         transform_list = {
             'train': transforms.Compose([
-                transforms.Resize((224, 224)),
+                transforms.Resize((256, 256)),
                 transforms.RandomHorizontalFlip(),
                 transforms.RandomRotation(30),
                 transforms.ColorJitter(),
@@ -22,7 +22,7 @@ class S3ImageDatasets(Dataset):
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
             ]),
             'test': transforms.Compose([
-                transforms.Resize((224, 224)),
+                transforms.Resize((256, 256)),
                 transforms.ToTensor(),
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
             ]),

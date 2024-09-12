@@ -9,7 +9,7 @@ test_losses = []
 train_accuracies = []
 test_accuracies = []
 
-def train_model(model,device, criterion, optimizer, train_loader, test_loader, num_epochs=10,save_file='model_state_dict.pth'):
+def train_model(model,device, criterion, optimizer, train_loader, test_loader, save_file, num_epochs=10) :
     for epoch in range(num_epochs):
         #최소 손실값 초기화
         valid_loss_min = np.inf
@@ -73,4 +73,5 @@ def train_model(model,device, criterion, optimizer, train_loader, test_loader, n
             #모델 저장
             torch.save(model.state_dict(), save_file)
             valid_loss_min = train_loss
+        
     return torch.load(save_file)

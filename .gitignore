@@ -1,6 +1,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,python,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,python,visualstudiocode
 
+.Utils
+staging_models/
+
+
+
 ### macOS ###
 # General
 .DS_Store
