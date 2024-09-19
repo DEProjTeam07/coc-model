@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1726713689049
+current_stage: None
+description: ''
+last_updated_timestamp: 1726713689049
+name: Efficientnet_B1
+run_id: 6da8bd8fec6a439894a6d0eba0e56799
+run_link: ''
+source: file:///home/ubuntu/coc-model/mlruns/0/6da8bd8fec6a439894a6d0eba0e56799/artifacts/final_model
+status: READY
+status_message: null
+storage_location: file:///home/ubuntu/coc-model/mlruns/0/6da8bd8fec6a439894a6d0eba0e56799/artifacts/final_model
+user_id: null
+version: 1

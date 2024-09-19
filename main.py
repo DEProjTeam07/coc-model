@@ -5,43 +5,50 @@ import torch.optim as optim
 import os
 from dotenv import load_dotenv
 
-from src.S3ImageDatasets import S3ImageDatasets
+from src.S3ImageDatasets import build_set_loaders
 from src.models.Efficientnets import Efficientnets
 from src.Train import train_model
 from src.Inference import infer_images_in_folder, save_to_parquet
+
+import mlflow
 
 #변수 로드
 load_dotenv(dotenv_path= '/home/ubuntu/coc-model/.env',
             verbose= True,)
 AWS_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
+tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
+mlflow.set_tracking_uri(tracking_uri)
+
 #print(os.getenv('AWS_BUCKET_NAME'))
+
 #학습 및 평가용 데이터셋 로드
-train_dataset = S3ImageDatasets(bucket_name=AWS_BUCKET_NAME,version='split_1',usage='train')
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
-
-test_dataset = S3ImageDatasets(bucket_name=AWS_BUCKET_NAME,version='split_1',usage='test')
-test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
-
+# train_dataset, test_dataset, train_loader, test_loader = build_set_loaders(bucket_name=AWS_BUCKET_NAME, version='split_1')
 
 #모델 선정
 model = Efficientnets(version=1)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
 
+lr = 0.001
+
+from src.Train import run_training
+
+run_training(model, device, AWS_BUCKET_NAME, 'split_1', 10, learning_rate=0.001)
+
 #모델 학습
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.0001)  # weight decay 추가
+# criterion = nn.CrossEntropyLoss()
+# optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=0.0001)  # weight decay 추가
+
+# train_model(model, device, criterion, optimizer, train_loader)
 
 
+# train_losses = []
+# test_losses = []
+# train_accuracies = []
+# test_accuracies = []
 
-
-train_losses = []
-test_losses = []
-train_accuracies = []
-test_accuracies = []
-
-trained_model = train_model(model=model, device=device, criterion=criterion, optimizer=optimizer, train_loader=train_loader,
-            save_file='/home/ubuntu/coc-model/model_registry/EffiB1.pth')
+# trained_model = train_model(model=model, device=device, criterion=criterion, optimizer=optimizer, train_loader=train_loader,
+#             save_file='/home/ubuntu/coc-model/model_registry/EffiB1.pth')
 
 # params = params
 

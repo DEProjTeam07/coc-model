@@ -1,0 +1,15 @@
+artifact_uri: file:///home/ubuntu/coc-model/mlruns/0/aa5452531974410698deaf2dad3390d9/artifacts
+end_time: 1726710935360
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: aa5452531974410698deaf2dad3390d9
+run_name: magnificent-rat-216
+run_uuid: aa5452531974410698deaf2dad3390d9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1726710673765
+status: 3
+tags: []
+user_id: ubuntu

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/ubuntu/coc-model/mlruns/0/9de6f8127d934bd7a326d05018f27ec3/artifacts
+end_time: 1726712937561
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 9de6f8127d934bd7a326d05018f27ec3
+run_name: skittish-fox-483
+run_uuid: 9de6f8127d934bd7a326d05018f27ec3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1726712676693
+status: 3
+tags: []
+user_id: ubuntu
