@@ -3,6 +3,8 @@ from PIL import Image
 from torch.utils.data import Dataset
 from io import BytesIO
 from torchvision import transforms
+from torch.utils.data import DataLoader
+
 
 class S3ImageDatasets(Dataset):
     def __init__(self, bucket_name, version, usage):
@@ -64,3 +66,13 @@ class S3ImageDatasets(Dataset):
         if self.transform:
             image = self.transform(image)
         return image, class_idx
+
+
+def build_set_loaders(bucket_name, version):
+    train_dataset = S3ImageDatasets(bucket_name=bucket_name,version=version,usage='train')
+    test_dataset = S3ImageDatasets(bucket_name=bucket_name,version=version,usage='test')
+
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
+
+    return train_dataset, test_dataset, train_loader, test_loader
