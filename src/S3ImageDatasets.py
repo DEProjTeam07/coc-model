@@ -42,6 +42,7 @@ class S3ImageDatasets(Dataset):
         self.s3_client = boto3.client('s3')
         self.imgs = self._load_images()
 
+    #이미지 리스트 로드
     def _load_images(self):
         imgs = []
         for class_name in self.class_names:
@@ -50,7 +51,8 @@ class S3ImageDatasets(Dataset):
             for obj in response['Contents']:
                 imgs.append((obj['Key'], self.class_to_idx[class_name]))
         return imgs
-        
+    
+    #로드된 이미지 리스트 중 이미지 하나씩 로드
     def _load_image(self, key):
         obj = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
         img_data = obj['Body'].read()
@@ -60,6 +62,7 @@ class S3ImageDatasets(Dataset):
     def __len__(self):
         return len(self.imgs)
 
+    #이미지와 라벨(클래스) 반환
     def __getitem__(self, idx):
         key, class_idx = self.imgs[idx]
         image = self._load_image(key)
@@ -68,6 +71,7 @@ class S3ImageDatasets(Dataset):
         return image, class_idx
 
 
+#하나의 데이터 버전에 있는 데이터를 train과 test 셋으로 랜덤 스플릿
 def build_set_loaders(bucket_name, version):
     train_dataset = S3ImageDatasets(bucket_name=bucket_name,version=version,usage='train')
     test_dataset = S3ImageDatasets(bucket_name=bucket_name,version=version,usage='test')

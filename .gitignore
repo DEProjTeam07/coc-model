@@ -1,14 +1,19 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,python,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,python,visualstudiocode
 
-.Utils
+mlartifacts/
 staging_models/
 mlruns/
-model_load.py
-requirements.txt
-inferance_data_transform.py
 inference_dataset/
 app/
+.github/
+
+.env
+.Utils
+requirements.txt
+Inference.py
+model_load.py
+inferance_data_transform.py
 
 ### macOS ###
 # General

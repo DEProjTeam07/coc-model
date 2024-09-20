@@ -6,9 +6,9 @@ import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
 from mlflow.exceptions import MlflowException
 
-
 from src.S3ImageDatasets import build_set_loaders
 
+#모델학습
 def train_model(model, device, criterion, optimizer, train_loader) :
     size = len(train_loader.dataset)
     model.train()
@@ -25,7 +25,8 @@ def train_model(model, device, criterion, optimizer, train_loader) :
             loss, current = loss.item(), batch * len(inputs)
             print(f"Loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
     
-def test_model(model, device, criterion, optimizer, test_loader):
+#모델 평가
+def test_model(model, device, criterion, test_loader):
     model.eval()
     test_loss = 0.0
     total = 0
@@ -47,7 +48,7 @@ def test_model(model, device, criterion, optimizer, test_loader):
 
     return test_loss, test_acc    
     
-
+#에포크별로 학습 진행
 def run_training(model, device, bucket_name, version, epochs, learning_rate):
     train_dataset, test_dataset, train_loader, test_loader = build_set_loaders(bucket_name=bucket_name, version=version)
 
@@ -57,6 +58,7 @@ def run_training(model, device, bucket_name, version, epochs, learning_rate):
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=0.0001)  # weight decay 추가
     scheduler = lr_scheduler.StepLR(optimizer, step_size=epochs, gamma=0.1)
     
+    #mlflow로 메트릭 등 수집
     with mlflow.start_run( ) as run:
         mlflow.log_param("epochs", epochs)
         mlflow.log_param("learning_rate", learning_rate)
@@ -79,11 +81,15 @@ def run_training(model, device, bucket_name, version, epochs, learning_rate):
                 mlflow.pytorch.log_model(model, "model")
             
             scheduler.step()
+        
+        #학습이 완료된 모델 로그
         mlflow.pytorch.log_model(model, "final_model")
         
+        #모델이 로그 되었는지 확인
         model_uri = f"runs:/{run.info.run_id}/final_model"
         model_name = model.get_model_name()
         
+        #로그 되었으면 모델 레지스트리에 등록
         try:
             mlflow.register_model(model_uri, model_name)
             print(f"Model successfully registerd at {model_uri}")

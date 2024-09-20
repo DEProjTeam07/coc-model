@@ -3,7 +3,8 @@ import torch
 import mlflow
 from dotenv import load_dotenv
 
-from src.models.Resnet import Resnets
+from src.models.Efficientnets import Efficientnets
+# from src.models.Resnet import Resnets
 # from src.models.TinyVGG import TinyVGG
 # from src.models.CNN import CNN
 
@@ -15,8 +16,8 @@ tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
 mlflow.set_tracking_uri(tracking_uri)
 
 #모델 선정
-# model = Efficientnets(version=1)
-model = Resnets(version=18)
+model = Efficientnets(version=0)
+# model = Resnets(version=50)
 # model = TinyVGG(32)
 # model = CNN()
 

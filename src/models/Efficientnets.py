@@ -19,9 +19,10 @@ class Efficientnets(nn.Module):
             case _:
                 raise ValueError("Efficientnets에 존재하지 않는 버전입니다.")
         
-        # Modify the classifier to fit your output
-        self.effi.classifier[1] = nn.Linear(self.effi.classifier[1].in_features, 2)
-
+        self.effi.classifier = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(self.effi.classifier[1].in_features, 2)
+        )
     def forward(self, x):
         x = self.transform(x)
         x = self.effi(x)

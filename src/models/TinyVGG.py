@@ -31,21 +31,3 @@ class TinyVGG(nn.Module):
 
     def get_model_name(self):
         return "TinyVGG"
-
-# from src.models.Basicblock import BasicBlock
-
-# class TinyVGG(nn.Module):
-#     def __init__(self, hidden_units: int) -> None:
-#         super().__init__()
-#         self.conv_block_1 = BasicBlock()
-#         self.conv_block_2 = BasicBlock()
-#         self.classifier = nn.Sequential(
-#             nn.Flatten(),
-#             nn.Linear(in_features=hidden_units * 56 * 56, out_features=2)
-#         )
-    
-#     def forward(self, x: torch.Tensor):
-#         x = self.conv_block_1(x)
-#         x = self.conv_block_2(x)
-#         x = self.classifier(x)
-#         return x
