@@ -82,7 +82,7 @@ def run_training(model, device, bucket_name, version, epochs, learning_rate):
         mlflow.pytorch.log_model(model, "final_model")
         
         model_uri = f"runs:/{run.info.run_id}/final_model"
-        model_name = 'Efficientnet_B1'
+        model_name = model.get_model_name()
         
         try:
             mlflow.register_model(model_uri, model_name)

@@ -26,3 +26,6 @@ class Efficientnets(nn.Module):
         x = self.transform(x)
         x = self.effi(x)
         return x
+    
+    def get_model_name(self):
+        return f"Efficientnet_B{self.version}"
