@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch
 
 class TinyVGG(nn.Module):
-    def __init__(self, hidden_units: int) -> None:
+    def __init__(self, hidden_units=32) -> None:
         super().__init__()
         self.conv_block_1 = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=hidden_units, kernel_size=3, padding=1),

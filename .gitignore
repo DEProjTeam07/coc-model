@@ -10,7 +10,6 @@ app/
 
 .env
 .Utils
-requirements.txt
 Inference.py
 model_load.py
 inferance_data_transform.py

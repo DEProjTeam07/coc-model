@@ -2,99 +2,131 @@ import mlflow
 import torch
 import numpy as np
 import torch.nn as nn
-import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
-from mlflow.exceptions import MlflowException
+from sklearn.metrics import precision_score, recall_score, f1_score
 
+from src.Utils.Models import ModelType, get_model
 from src.S3ImageDatasets import build_set_loaders
+from src.Utils.TrainigParams import validate_params
+from src.Utils.Optimizer import OptimizerType, get_optimizer
 
-#모델학습
-def train_model(model, device, criterion, optimizer, train_loader) :
-    size = len(train_loader.dataset)
-    model.train()
-    for batch, (inputs, labels) in enumerate(train_loader):
-        inputs, labels = inputs.to(device), labels.to(device)
-        
-        optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
 
-        if batch % 10 == 0:
-            loss, current = loss.item(), batch * len(inputs)
-            print(f"Loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
-    
-#모델 평가
-def test_model(model, device, criterion, test_loader):
-    model.eval()
-    test_loss = 0.0
-    total = 0
-    correct = 0
+class TrainModel():
+    def __init__(self, model_type, model_version, device, epochs,
+                 optimizer_type, dataset_version, learning_rate, batch_size):
+        self.model_type = model_type
+        self.model_version = model_version
+        self.device = device
+        self.epochs = epochs
+        self.optimizer_type = optimizer_type
+        self.dataset_version = dataset_version
+        self.learning_rate = learning_rate
+        self.batch_size = batch_size
 
-    with torch.no_grad():
-        for inputs, labels in test_loader:
-            inputs, labels = inputs.to(device), labels.to(device)
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
-            test_loss += loss.item()
+        # 모델 타입을 enum으로 변환
+        self.model_type_enum = getattr(ModelType, self.model_type.upper(), None)
+        # print(model_type_enum)
+        if self.model_type_enum is None:
+            raise ValueError(f"지원되지 않는 모델 타입입니다.: {self.model_type}")
 
-            _, predicted = torch.max(outputs, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+        # 모델 선택
+        self.model = get_model(self.model_type_enum, model_version).to(device)
 
-    test_loss = test_loss / len(test_loader)
-    test_acc = 100 * correct / total
+        #옵티마이저 타입을 enum으로 변환
+        optimizer_type_enum = getattr(OptimizerType, self.optimizer_type.upper(), None)
+        if optimizer_type_enum is None:
+            raise ValueError(f"지원되지 않는 옵티마이저 타입입니다.: {self.optimizer_type}")
 
-    return test_loss, test_acc    
-    
-#에포크별로 학습 진행
-def run_training(model, device, bucket_name, version, epochs, learning_rate):
-    train_dataset, test_dataset, train_loader, test_loader = build_set_loaders(bucket_name=bucket_name, version=version)
+        self.optimizer = get_optimizer(optimizer_type_enum, self.model, self.learning_rate)
 
-    valid_loss_min = np.inf
-    
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=0.0001)  # weight decay 추가
-    scheduler = lr_scheduler.StepLR(optimizer, step_size=epochs, gamma=0.1)
-    
-    #mlflow로 메트릭 등 수집
-    with mlflow.start_run( ) as run:
-        mlflow.log_param("epochs", epochs)
-        mlflow.log_param("learning_rate", learning_rate)
-        
-        for epoch in range(epochs):
-            print(f"Epoch {epoch+1}\n--------------------------")
-            train_model(model, device, criterion, optimizer, train_loader)
-            test_loss, test_acc = test_model(model, device, criterion, optimizer, test_loader)
+        self.train_dataset, self.test_dataset, self.train_loader, self.test_loader = build_set_loaders(self.dataset_version)
 
-            mlflow.log_metric('test_loss', test_loss)
-            mlflow.log_metric('test_accuracy', test_acc)
+        self.criterion = nn.CrossEntropyLoss()
+        self.scheduler = lr_scheduler.StepLR(self.optimizer, step_size=self.epochs, gamma=0.1)
 
-            if test_loss <= valid_loss_min:
-                print("검증 손실값 감소 ------------ 모델 가중치를 저장합니다")
-                print(f"new best test loss : {test_loss}")
-                mlflow.log_metric('best_loss', test_loss)
-
-                valid_loss_min = test_loss
-
-                mlflow.pytorch.log_model(model, "model")
+    # 모델 학습
+    def train_model(self):
+        size = len(self.train_loader.dataset)
+        self.model.train()
+        for batch, (inputs, labels) in enumerate(self.train_loader):
+            inputs, labels = inputs.to(self.device), labels.to(self.device)
             
-            scheduler.step()
-        
-        #학습이 완료된 모델 로그
-        mlflow.pytorch.log_model(model, "final_model")
-        
-        #모델이 로그 되었는지 확인
-        model_uri = f"runs:/{run.info.run_id}/final_model"
-        model_name = model.get_model_name()
-        
-        #로그 되었으면 모델 레지스트리에 등록
-        try:
-            mlflow.register_model(model_uri, model_name)
-            print(f"Model successfully registerd at {model_uri}")
-        except MlflowException as e:
-            print(f"Model register faile : {e}")
+            self.optimizer.zero_grad()
+            outputs = self.model(inputs)
+            loss = self.criterion(outputs, labels)
+            loss.backward()
+            self.optimizer.step()
 
-        print("Done!")            
+            if batch % 10 == 0:
+                loss, current = loss.item(), batch * len(inputs)
+                print(f"Batch {batch}: Loss: {loss:.7f}  [{current}/{size}]")
+
+    # 모델 평가
+    def test_model(self):
+        self.model.eval()
+        test_loss, total, correct = 0.0, 0, 0
+        all_labels, all_predictions = [], []
+        
+        with torch.no_grad():
+            for inputs, labels in self.test_loader:
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
+                outputs = self.model(inputs)
+                loss = self.criterion(outputs, labels)
+                test_loss += loss.item()
+
+                _, predicted = torch.max(outputs, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+
+                all_labels.extend(labels.cpu().numpy())
+                all_predictions.extend(predicted.cpu().numpy())
+
+        test_loss /= len(self.test_loader)
+        test_acc = 100 * correct / total
+
+        precision = precision_score(all_labels, all_predictions, average='weighted')
+        recall = recall_score(all_labels, all_predictions, average='weighted')
+        f1 = f1_score(all_labels, all_predictions, average='weighted')
+
+        return test_loss, test_acc, precision, recall, f1
+
+    def run_training(self):
+        # 파라미터 유효성 검사
+        model_name = self.model.get_model_name()
+        print(model_name)
+        artifact_path = f'models/{model_name}'
+        print(artifact_path)
+        mlflow.set_tag('model_type',model_name)
+        mlflow.set_experiment(f'{model_name}_experiment')
+        validate_params(self.epochs, self.learning_rate)
+        from src.Utils.EarlyStopping import EarlyStopping
+
+        with mlflow.start_run(nested=True) as run:
+            mlflow.log_param("model_name", model_name)
+            mlflow.log_param("epochs", self.epochs)
+            mlflow.log_param("learning_rate", self.learning_rate)
+            mlflow.log_param("batch_size", self.batch_size)
+            mlflow.log_param("optimizer_type", self.optimizer_type)
+
+            for epoch in range(self.epochs):
+                print(f"Epoch {epoch + 1}/{self.epochs}\n--------------------------")
+                self.train_model()
+                loss, acc, precision, recall, f1 = self.test_model()
+
+                mlflow.log_metric('Loss', loss, step=epoch)
+                mlflow.log_metric('Accuracy', acc, step=epoch)
+                mlflow.log_metric('Precision', precision, step=epoch)
+                mlflow.log_metric('Recall', recall, step=epoch)
+                mlflow.log_metric('F1_Score', f1, step=epoch)
+                
+                mlflow.pytorch.log_model(self.model, 
+                                         artifact_path=artifact_path
+                                         )
+                
+                self.scheduler.step()
+            
+            model_uri = f"runs:/{run.info.run_id}/{artifact_path}"
+            mlflow.register_model(model_uri=model_uri, name=model_name)
+            
+            print("Done!")            
         mlflow.end_run()

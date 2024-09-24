@@ -1,5 +1,7 @@
+import os
 import boto3
 from PIL import Image
+from dotenv import load_dotenv
 from torch.utils.data import Dataset
 from io import BytesIO
 from torchvision import transforms
@@ -7,13 +9,25 @@ from torch.utils.data import DataLoader
 
 
 class S3ImageDatasets(Dataset):
-    def __init__(self, bucket_name, version, usage):
-        self.bucket_name = bucket_name
-        self.version = version
+    def __init__(self, dataset_version, usage):
+        self.dataset_version = dataset_version
         self.usage = usage
-        self.prefix = str(self.version)+'/'+str(self.usage)+'/'
+        self.prefix = f"{self.dataset_version}/{self.usage}/"
         
-        #이미지 변환 형태 지정
+        load_dotenv(dotenv_path='/home/ubuntu/coc-model/.env', verbose=True)
+        self.bucket_name = os.getenv('AWS_BUCKET_NAME')
+
+        # 이미지 변환 형태 지정
+        self.transform = self._get_transform(usage)
+        
+        # 클래스 이름과 클래스 인덱스 매핑
+        self.class_names = ['defective', 'good']
+        self.class_to_idx = {class_name: idx for idx, class_name in enumerate(self.class_names)}
+
+        self.s3_client = boto3.client('s3')
+        self.imgs = self._load_images()
+
+    def _get_transform(self, usage):
         transform_list = {
             'train': transforms.Compose([
                 transforms.Resize((256, 256)),
@@ -30,29 +44,29 @@ class S3ImageDatasets(Dataset):
             ]),
         }
 
-        if usage not in list(transform_list.keys()):
+        if usage not in transform_list:
             raise ValueError("Transformation에 존재하지 않는 사용 형태입니다.")
-
-        self.transform = transform_list[self.usage]
         
-        # 클래스 이름과 클래스 인덱스 매핑
-        self.class_names = ['defective', 'good']
-        self.class_to_idx = {class_name: idx for idx, class_name in enumerate(self.class_names)}
+        return transform_list[usage]
 
-        self.s3_client = boto3.client('s3')
-        self.imgs = self._load_images()
-
-    #이미지 리스트 로드
+    # 이미지 리스트 로드
     def _load_images(self):
         imgs = []
         for class_name in self.class_names:
-            class_prefix = str(self.prefix)+str(class_name)+'/'
-            response = self.s3_client.list_objects(Bucket=self.bucket_name, Prefix=class_prefix)
-            for obj in response['Contents']:
-                imgs.append((obj['Key'], self.class_to_idx[class_name]))
+            class_prefix = f"{self.prefix}{class_name}/"
+            try:
+                response = self.s3_client.list_objects(Bucket=self.bucket_name, Prefix=class_prefix)
+                if 'Contents' not in response:
+                    print(f"No images found for {response}. Check if the bucket is empty or the prefix is correct.")
+                    continue
+                
+                for obj in response['Contents']:
+                    imgs.append((obj['Key'], self.class_to_idx[class_name]))
+            except Exception as e:
+                print(f"Error loading images from S3: {e}")
         return imgs
     
-    #로드된 이미지 리스트 중 이미지 하나씩 로드
+    # 로드된 이미지 리스트 중 이미지 하나씩 로드
     def _load_image(self, key):
         obj = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
         img_data = obj['Body'].read()
@@ -62,7 +76,7 @@ class S3ImageDatasets(Dataset):
     def __len__(self):
         return len(self.imgs)
 
-    #이미지와 라벨(클래스) 반환
+    # 이미지와 라벨(클래스) 반환
     def __getitem__(self, idx):
         key, class_idx = self.imgs[idx]
         image = self._load_image(key)
@@ -71,10 +85,10 @@ class S3ImageDatasets(Dataset):
         return image, class_idx
 
 
-#하나의 데이터 버전에 있는 데이터를 train과 test 셋으로 랜덤 스플릿
-def build_set_loaders(bucket_name, version):
-    train_dataset = S3ImageDatasets(bucket_name=bucket_name,version=version,usage='train')
-    test_dataset = S3ImageDatasets(bucket_name=bucket_name,version=version,usage='test')
+# 하나의 데이터 버전에 있는 데이터를 train과 test 셋으로 랜덤 스플릿
+def build_set_loaders(dataset_version):
+    train_dataset = S3ImageDatasets(dataset_version=dataset_version, usage='train')
+    test_dataset = S3ImageDatasets(dataset_version=dataset_version, usage='test')
 
     train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
