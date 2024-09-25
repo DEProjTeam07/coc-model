@@ -7,6 +7,18 @@ jobs:
   job1:
     runs-on: self-hosted
     steps:
-      - name: List all files in directory
-        run: ls -al /home/ubuntu
+       # mlflow 서버는 사용하고 계시기 떄문에 함부로 켜거나 끄는 작업을 할 수 없다. 
 
+      
+       # Flask 서버가 켜져 있는지 확인 
+       - name: Check if Flask server is running with absolute path
+         run: |
+           if pgrep -f "/home/ubuntu/youngwoo-flask-app/backend_app_v1.py"; then
+              echo "Flask server is running"
+           else
+              echo "Flask server is not running. Starting the server..."
+           fi
+
+
+       # Streamlit 서버가 켜져 있는지 확인 
+      
