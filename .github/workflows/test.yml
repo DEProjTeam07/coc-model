@@ -61,7 +61,7 @@ jobs:
            pyenv activate youngwoo-env
 
            echo "Flask 서버를 시작하려고 합니다."
-           nohup python3 /home/ubuntu/youngwoo-flask-app/backend_app_v1.py > /home/ubuntu/youngwoo-flask-app/flask_app.log 2>&1 &
+           nohup python /home/ubuntu/youngwoo-flask-app/backend_app_v1.py > /home/ubuntu/youngwoo-flask-app/flask_app.log 2>&1 &
            echo "Flask 서버를 시작했습니다."
        
 
