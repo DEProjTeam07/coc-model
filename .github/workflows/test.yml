@@ -13,11 +13,14 @@ jobs:
        # Flask 서버가 켜져 있는지 확인 
        - name: Check if Flask server is running with absolute path
          run: |
-           if pgrep -f "/home/ubuntu/youngwoo-flask-app/backend_app_v1.py"; then
-              echo "Flask server is running"
-           else
-              echo "Flask server is not running. Starting the server..."
-           fi
+          if pgrep -f "/home/ubuntu/youngwoo-flask-app/backend_app_v1.py"; then
+            echo "Flask 서버가 켜져있습니다."
+            echo "Automated Pipeline를 실행해야 되서 재정비를 해야 하므로 Flask 서버를 끄겠습니다."
+            pkill -f "/home/ubuntu/youngwoo-flask-app/backend_app_v1.py"
+            echo "Flask 서버를 껐습니다."
+          else
+            echo "Flask 서버가 이미 꺼져 있는 상태이므로 별다른 작업을 하지 않겠습니다."
+          fi
 
 
        # Streamlit 서버가 켜져 있는지 확인 
