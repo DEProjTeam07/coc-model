@@ -1,14 +1,14 @@
 name: CI/CD 
 
 on:
+  # 실행되는 조건은 임시적으로 수동적으로 실행되게끔 했다. 즉각적으로 테스트하기 위함이다. 
   workflow_dispatch:
 
 jobs:
   job1:
     runs-on: self-hosted
     steps:
-       # mlflow 서버는 서우님이 사용하고 계시기 떄문에 작업을 할 수 없다. 
-       # 나만의 mlflow 서버를 만들어야 하나 고민중이다...
+       # mlflow 서버가 켜져 있으면 끄는 작업을 한다. 
        - name: Check if MLflow server is running with absolute path 
          run: |
            echo "MLflow 서버 상태를 확인하는 작업은 보류입니다."
@@ -51,6 +51,18 @@ jobs:
 
 
        # Flask 서버를 켠다. 
+       - name: Start Flask server in virtual environment
+         run: |
+           echo "youngwoo-env 가상 환경을 활성화 해서 Flask 서버를 켭시다."
+           export PATH="$HOME/.pyenv/bin:$PATH"
+           eval "$(pyenv init --path)"
+           eval "$(pyenv init -)"
+           eval "$(pyenv virtualenv-init -)"
+           pyenv activate youngwoo-env
+
+           echo "Flask 서버를 시작하려고 합니다."
+           nohup python3 /home/ubuntu/youngwoo-flask-app/backend_app_v1.py > /home/ubuntu/youngwoo-flask-app/flask_app.log 2>&1 &
+           echo "Flask 서버를 시작했습니다."
        
 
 
