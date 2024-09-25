@@ -14,7 +14,7 @@ jobs:
            echo "MLflow 서버 상태를 확인하는 작업은 보류입니다."
 
       
-       # Flask 서버가 켜져 있으면 끄는 작업을 한다. 
+       # Flask 서버가 켜져 있으면 끄는 작업을 한다. (systemd 방식)
        - name: Check and stop Flask server
          run: |
            if sudo systemctl is-active --quiet flask_app; then
@@ -27,19 +27,17 @@ jobs:
            fi
 
 
-       # Streamlit 서버가 켜져 있으면 끄는 작업을 한다.
-       - name: Check if Streamlit server is running
+       # Streamlit 서버가 켜져 있으면 끄는 작업을 한다. (systemd 방식)
+       - name: Check and stop Streamlit server
          run: |
-           if pgrep -f "/home/ubuntu/youngwoo-flask-app/fronted_app_v1.py"; then
-             echo "Streamlit 서버가 켜져있습니다."
-             echo "Automated Pipeline을 실행해야 되서 재정비를 해야 하므로 Streamlit 서버를 종료하겠습니다."
-             pkill -f "/home/ubuntu/youngwoo-flask-app/fronted_app_v1.py"
-             echo "Streamlit 서버를 종료했습니다."
+           if sudo systemctl is-active --quiet streamlit_app; then
+             echo "Streamlit 서버가 실행하고 있는 중이었습니다."
+             echo "Automated Pipeline을 실행하기 되서 재정비를 해야 하므로 Streamlit 서버를 종료하겠습니다."
+             sudo systemctl stop streamlit_app
+             echo "Streamlit 서버를 중지했습니다."
            else
-             echo "Streamlit 서버가 이미 종료된 상태이므로 별다른 작업을 하지 않겠습니다."
+             echo "Streamlit 서버가 실행 중이지 않습니다. 별다른 작업을 하지 않습니다."
            fi
-
-       
 
 
        # mlflow 서버를 켜는 작업을 한다. 
@@ -50,30 +48,34 @@ jobs:
 
        
 
-       # Flask 서버 다시 시작
-       # - name: Start Flask server
-       #   run: | 
-       #     echo "Flask 서버를 시작합니다."
-       #     sudo systemctl start flask_app
+       # Flask 서버를 켠다. 
+       - name: Start Flask server
+         run: | 
+           echo "Flask 서버를 시작합니다."
+           sudo systemctl start flask_app
 
-       # # Flask 서버 상태 확인
-       # - name: Check Flask server status
-       #   run: | 
-       #     echo "Flask의 서버 상태를 확인합니다."
-       #     sudo systemctl status flask_app
+       # Flask 서버 상태 확인
+       - name: Check Flask server status
+         run: | 
+           echo "Flask의 서버 상태를 확인합니다."
+           sudo systemctl status flask_app
 
 
        # Streamlit 서버를 켠다. 
+       - name: Start Streamlit server
+         run: | 
+           echo "Streamlit 서버를 시작합니다."
+           sudo systemctl start streamlit_app
+
+       # Flask 서버 상태 확인
+       - name: Check Streamlit server status
+         run: | 
+           echo "Streamit의 서버 상태를 확인합니다."
+           sudo systemctl status streamlit_app
 
 
        
-      
-
-
-       
-      
-
-
+  
 
        
       
