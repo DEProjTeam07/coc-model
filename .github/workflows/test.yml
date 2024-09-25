@@ -38,6 +38,7 @@ jobs:
            else
              echo "Streamlit 서버가 이미 종료된 상태이므로 별다른 작업을 하지 않겠습니다."
            fi
+
        
 
 
@@ -62,12 +63,31 @@ jobs:
 
            echo "Flask 서버를 시작하려고 합니다."
            nohup python /home/ubuntu/youngwoo-flask-app/backend_app_v1.py > /home/ubuntu/youngwoo-flask-app/flask_app.log 2>&1 &
+           sleep 5
            echo "Flask 서버를 시작했습니다."
-       
+
+
+           
+       - name: Verify Flask server is running
+         run: |
+              if pgrep -f "/home/ubuntu/youngwoo-flask-app/backend_app_v1.py"; then
+                echo "Flask 서버가 성공적으로 실행되고 있습니다."
+              else
+                echo "Flask 서버가 시작되지 않았습니다." && exit 1
+              fi
 
 
 
        # Streamlit 서버를 켠다. 
+
+
+       
+      
+
+
+       
+      
+
 
 
        
