@@ -1,5 +1,10 @@
 # 타이어 결함 이미지 분류하기
 
+### 명령어 예시
+```
+python main.py train --dataset_version split_1 --model_type cnn --optimizer_type adam --epochs 10 --learning_rate 0.01 --batch_size 32
+```
+
 mlops 프로세스
 
 
