@@ -15,16 +15,16 @@ jobs:
 
       
        # Flask 서버가 켜져 있으면 끄는 작업을 한다. 
-       - name: Check if Flask server is running with absolute path
+       - name: Check and stop Flask server
          run: |
-          if pgrep -f "/home/ubuntu/youngwoo-flask-app/backend_app_v1.py"; then
-            echo "Flask 서버가 켜져있습니다."
-            echo "Automated Pipeline를 실행해야 되서 재정비를 해야 하므로 Flask 서버를 종료하겠습니다."
-            pkill -f "/home/ubuntu/youngwoo-flask-app/backend_app_v1.py"
-            echo "Flask 서버를 종료했습니다."
-          else
-            echo "Flask 서버가 이미 꺼져 있는 상태이므로 별다른 작업을 하지 않겠습니다."
-          fi
+           if sudo systemctl is-active --quiet flask_app; then
+             echo "Flask 서버가 실행하고 있는 중이었습니다."
+             echo "Automated Pipeline을 실행해야 되서 재정비를 해야 하므로 Flask 서버를 종료하겠습니다."
+             sudo systemctl stop flask_app
+             echo "Flask 서버를 중지했습니다."
+           else
+             echo "Flask 서버가 실행 중이지 않습니다. 별다른 작업을 하지 않습니다."
+           fi
 
 
        # Streamlit 서버가 켜져 있으면 끄는 작업을 한다.
@@ -51,12 +51,16 @@ jobs:
        
 
        # Flask 서버 다시 시작
-       - name: Start Flask server
-         run: sudo systemctl start flask_app
+       # - name: Start Flask server
+       #   run: | 
+       #     echo "Flask 서버를 시작합니다."
+       #     sudo systemctl start flask_app
 
-       # Flask 서버 상태 확인
-       - name: Check Flask server status
-         run: sudo systemctl status flask_app
+       # # Flask 서버 상태 확인
+       # - name: Check Flask server status
+       #   run: | 
+       #     echo "Flask의 서버 상태를 확인합니다."
+       #     sudo systemctl status flask_app
 
 
        # Streamlit 서버를 켠다. 
