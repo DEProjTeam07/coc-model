@@ -1,0 +1,11 @@
+name: List Directory Contents
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job1:
+    runs-on: self-hosted
+    steps:
+      - name: List all files in directory
+        run: ls -al 
