@@ -1,4 +1,4 @@
-name: List Directory Contents
+name: CI/CD 
 
 on:
   workflow_dispatch:
