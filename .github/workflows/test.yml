@@ -50,24 +50,17 @@ jobs:
 
        
 
+       # Flask 서버를 켜는 스크립트 실행 전 실행 권한(execute) 부여
+       - name: Grant execute permission to flask_start.sh
+         run: chmod +x /home/ubuntu/youngwoo-flask-app/flask_start.sh
+        
 
-       # Flask 서버를 켠다. 
-       - name: Start Flask server in virtual environment
-         run: |
-           echo "youngwoo-env 가상 환경을 활성화 해서 Flask 서버를 켭시다."
-           export PATH="$HOME/.pyenv/bin:$PATH"
-           eval "$(pyenv init --path)"
-           eval "$(pyenv init -)"
-           eval "$(pyenv virtualenv-init -)"
-           pyenv activate youngwoo-env
+       # Flask 서버를 켜는 외부 스크립트 실행
+       - name: Start Flask server using external script
+         run: /home/ubuntu/youngwoo-flask-app/flask_start.sh
+         
 
-           echo "Flask 서버를 시작하려고 합니다."
-           nohup python /home/ubuntu/youngwoo-flask-app/backend_app_v1.py > /home/ubuntu/youngwoo-flask-app/flask_app.log 2>&1 &
-           sleep 5
-           echo "Flask 서버를 시작했습니다."
-
-
-           
+       # Flask 서버가 켜져 있는지 확인한다. 
        - name: Verify Flask server is running
          run: |
               if pgrep -f "/home/ubuntu/youngwoo-flask-app/backend_app_v1.py"; then
