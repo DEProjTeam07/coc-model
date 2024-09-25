@@ -57,13 +57,13 @@ class S3ImageDatasets(Dataset):
             try:
                 response = self.s3_client.list_objects(Bucket=self.bucket_name, Prefix=class_prefix)
                 if 'Contents' not in response:
-                    print(f"No images found for {response}. Check if the bucket is empty or the prefix is correct.")
+                    print(f"해당 디렉토리 {response}에 이미지가 없습니다. 버킷이 비어있는지, prefix가 정확한지 확인하십시오.")
                     continue
                 
                 for obj in response['Contents']:
                     imgs.append((obj['Key'], self.class_to_idx[class_name]))
             except Exception as e:
-                print(f"Error loading images from S3: {e}")
+                print(f"S3로부터 이미지를 로드하는 중 오류 발생: {e}")
         return imgs
     
     # 로드된 이미지 리스트 중 이미지 하나씩 로드

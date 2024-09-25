@@ -1,0 +1,277 @@
+@startuml
+
+class S3ImageDatasets {
+  - dataset_version: String
+  - usage: String
+  - prefix: String
+  - bucket_name: String
+  - transform: Transform
+  - class_names: List<String>
+  - class_to_idx: Dict<String, int>
+  - s3_client: boto3.client
+  - imgs: List<Tuple<String, int>>
+  
+  + __init__(dataset_version: String, usage: String)
+  + _get_transform(usage: String): Transform
+  + _load_images(): List<Tuple<String, int>>
+  + _load_image(key: String): Image
+  + __len__(): int
+  + __getitem__(idx: int): Tuple<Image, int>
+}
+note top of S3ImageDatasets
+  S3 버킷에서 이미지를 불러와
+  PyTorch Dataset 인터페이스를 구현.
+end note
+
+package torch{
+  class utils.data.Dataset {
+  
+  }
+}
+
+S3ImageDatasets --> torch.utils.data.Dataset : extends
+
+
+class TrainModel {
+  - model_type: ModelType
+  - model_version: String
+  - epochs: int
+  - optimizer_type: OptimizerType
+  - dataset_version: String
+  - learning_rate: float
+  - batch_size: int
+  - min_loss: float
+  - min_accuracy: float
+  - device: torch.device
+  - model: nn.Module
+  - optimizer: Optimizer
+  - train_dataset: S3ImageDatasets
+  - test_dataset: S3ImageDatasets
+  - train_loader: DataLoader
+  - test_loader: DataLoader
+  - criterion: nn.CrossEntropyLoss
+  - scheduler: lr_scheduler.StepLR
+
+  + __init__(model_type, model_version, epochs, optimizer_type, dataset_version, learning_rate, batch_size, min_loss, min_accuracy)
+  + train_model(): void
+  + test_model(): Tuple[float, float, float, float, float]
+  + run_training(): void
+}
+
+note top of TrainModel
+  학습을 수행할 데이터셋 버전, 모델, 에포크, 옵티마이저,
+  학습률, 배치사이즈, 최소 loss값, 최소 accuracy값을 받아 학습을 수행
+end note
+
+class ModelType {
+  {static} EFFICIENTNET : String = "efficientnet"
+  {static} RESNET : String = "resnet"
+  {static} TINYVGG : String = "tinyvgg"
+  {static} CNN : String = "cnn"
+}
+
+class Efficientnets {
+  - version: int
+  - effi: torchvision.models.EfficientNet
+  + __init__(version: int)
+  + forward(x): torch.Tensor
+  + get_model_name(): String
+}
+
+Efficientnets --> torch.nn.Module : extends
+
+class Resnets {
+    - version: int
+    - resnet: torchvisino.models.Resnet
+    + __init__(version: int)
+    + forward(x): torch.Tenser
+    + get_model_name(): String
+}
+
+Resnets --> torch.nn.Module : extends
+
+class TinyVGG {
+  - conv_block_1: nn.Sequential
+  - conv_block_2: nn.Sequential
+  - classifier: nn.Sequential
+  + __init__(hidden_units: int=32)
+  + forward(x: torch.Tensor): torch.Tensor
+  + get_model_name(): String
+}
+
+package torch{
+  class nn.Module {
+  }
+}
+
+TinyVGG --> torch.nn.Module : extends
+TinyVGG --> torch.nn.Sequential : uses
+
+
+class CNN {
+  - block1: BasicBlock
+  - block2: BasicBlock
+  - block3: BasicBlock
+  - fc1: nn.Linear
+  - fc2: nn.Linear
+  - fc3: nn.Linear
+  - relu: nn.ReLU
+  + __init__()
+  + forward(x: torch.Tensor): torch.Tensor
+  + get_model_name(): String
+}
+
+class BasicBlock {
+  - conv1: nn.Conv2d
+  - conv2: nn.Conv2d
+  - relu: nn.ReLU
+  - pool: nn.MaxPool2d
+  + __init__(hidden_units: int, in_channels: int, out_channels: int)
+  + forward(x: torch.Tensor): torch.Tensor
+}
+
+
+
+CNN --> torch.nn.Module : extends
+BasicBlock --> torch.nn.Module : extends
+CNN --> BasicBlock : uses
+BasicBlock --> torch.nn.Conv2d : uses
+BasicBlock --> torch.nn.ReLU : uses
+BasicBlock --> torch.nn.MaxPool2d : uses
+CNN --> torch.nn.Linear : uses
+CNN --> torch.nn.ReLU : uses
+
+
+class get_model {
+  + get_model(model_type: ModelType, version: int = None): nn.Module
+}
+
+ModelType <|-- get_model : uses
+get_model --> Efficientnets : returns
+get_model --> Resnets : returns
+get_model --> TinyVGG : returns
+get_model --> CNN : returns
+
+
+
+class OptimizerType {
+  {static} SGD: String = "sgd"
+  {static} ADAM: String = "adam"
+  {static} RMSPROP: String = "rmsprop"
+}
+
+class get_optimizer {
+  + get_optimizer(optimizer_type: OptimizerType, model: torch.nn.Module, learning_rate: float, weight_decay: float = 0.0001): torch.optim.Optimizer
+}
+
+package torch.optim {
+  class SGD {
+    + SGD(parameters: Iterable, lr: float)
+  }
+
+  class Adam {
+    + Adam(parameters: Iterable, lr: float, weight_decay: float)
+  }
+
+  class RMSprop {
+    + RMSprop(parameters: Iterable, lr: float)
+  }
+}
+
+OptimizerType <|-- get_optimizer : uses
+get_optimizer --> torch.optim.SGD : uses
+get_optimizer --> torch.optim.Adam : uses
+get_optimizer --> torch.optim.RMSprop : uses
+
+
+class validate_params {
+  + validate_params(epochs: int, learning_rate: float): void
+}
+
+class get_tracking_uri {
+  + get_tracking_uri(): void
+}
+
+class requests {
+  + get(url: String): Response
+  + RequestException
+}
+
+class mlflow {
+  + set_tracking_uri(uri: String): void
+}
+
+class os {
+  + getenv(key: String): String
+}
+
+get_tracking_uri --> requests : uses
+get_tracking_uri --> mlflow : uses
+get_tracking_uri --> os : uses
+
+class get_all_registered_models {
+  + get_all_registered_models(client: MlflowClient): List[String]
+}
+
+class production_model_alias {
+  + production_model_alias(evaluation_metric: String): void
+}
+
+class MlflowClient {
+  + search_registered_models(): List[Model]
+  + search_model_versions(query: String): List[ModelVersion]
+  + get_run(run_id: String): Run
+  + set_model_version_tag(name: String, version: int, key: String, value: String): void
+}
+
+class Model {
+  + name: String
+}
+
+class ModelVersion {
+  + version: int
+  + run_id: String
+}
+
+class Run {
+  + data: Data
+}
+
+class Data {
+  + metrics: Dict[String, float]
+}
+
+get_all_registered_models --> MlflowClient : uses
+production_model_alias --> get_all_registered_models : calls
+production_model_alias --> MlflowClient : uses
+production_model_alias --> Model : processes
+production_model_alias --> ModelVersion : processes
+production_model_alias --> Run : processes
+Run --> Data : processes
+
+class DataLoader {
+}
+
+TrainModel --> ModelType : uses
+TrainModel --> OptimizerType : uses
+TrainModel --> S3ImageDatasets : uses
+TrainModel --> DataLoader : uses
+TrainModel --> torch.nn.Module : uses
+TrainModel --> lr_scheduler.StepLR : uses
+
+class fire.Fire {
+  + Fire(mapping: Dict[String, Function]): void
+}
+
+class main {
+  + train_model(dataset_version: String, model_type: String, model_version=None, optimizer_type: String='adam', epochs: int=10, learning_rate: float=0.001, batch_size: int=16): void
+  + production_alias(param: String): void
+}
+
+main --> TrainModel : uses
+main --> production_model_alias : uses
+main --> get_tracking_uri : uses
+main --> fire.Fire : uses
+
+@enduml
+

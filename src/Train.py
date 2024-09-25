@@ -1,28 +1,32 @@
 import mlflow
 import torch
-import numpy as np
 import torch.nn as nn
 import torch.optim.lr_scheduler as lr_scheduler
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 from src.Utils.Models import ModelType, get_model
 from src.S3ImageDatasets import build_set_loaders
-from src.Utils.TrainigParams import validate_params
+from src.Utils.TrainingParams import validate_params
 from src.Utils.Optimizer import OptimizerType, get_optimizer
-
+from src.Utils.EarlyStopping import EarlyStopping
 
 class TrainModel():
-    def __init__(self, model_type, model_version, device, epochs,
-                 optimizer_type, dataset_version, learning_rate, batch_size):
+    def __init__(self, model_type, model_version, epochs, 
+                 optimizer_type, dataset_version, learning_rate, batch_size,
+                 min_loss=1, min_accuracy=0.7):
         self.model_type = model_type
         self.model_version = model_version
-        self.device = device
         self.epochs = epochs
         self.optimizer_type = optimizer_type
         self.dataset_version = dataset_version
         self.learning_rate = learning_rate
         self.batch_size = batch_size
 
+        self.min_loss = min_loss
+        self.min_accuracy = min_accuracy
+
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
         # 모델 타입을 enum으로 변환
         self.model_type_enum = getattr(ModelType, self.model_type.upper(), None)
         # print(model_type_enum)
@@ -30,7 +34,7 @@ class TrainModel():
             raise ValueError(f"지원되지 않는 모델 타입입니다.: {self.model_type}")
 
         # 모델 선택
-        self.model = get_model(self.model_type_enum, model_version).to(device)
+        self.model = get_model(self.model_type_enum, model_version).to(self.device)
 
         #옵티마이저 타입을 enum으로 변환
         optimizer_type_enum = getattr(OptimizerType, self.optimizer_type.upper(), None)
@@ -90,16 +94,14 @@ class TrainModel():
 
         return test_loss, test_acc, precision, recall, f1
 
+    #에포크별 학습
     def run_training(self):
-        # 파라미터 유효성 검사
         model_name = self.model.get_model_name()
-        print(model_name)
         artifact_path = f'models/{model_name}'
-        print(artifact_path)
         mlflow.set_tag('model_type',model_name)
         mlflow.set_experiment(f'{model_name}_experiment')
         validate_params(self.epochs, self.learning_rate)
-        from src.Utils.EarlyStopping import EarlyStopping
+        early_stopping = EarlyStopping(min_loss=self.min_loss, min_acc=self.min_accuracy)
 
         with mlflow.start_run(nested=True) as run:
             mlflow.log_param("model_name", model_name)
@@ -113,20 +115,29 @@ class TrainModel():
                 self.train_model()
                 loss, acc, precision, recall, f1 = self.test_model()
 
-                mlflow.log_metric('Loss', loss, step=epoch)
-                mlflow.log_metric('Accuracy', acc, step=epoch)
-                mlflow.log_metric('Precision', precision, step=epoch)
-                mlflow.log_metric('Recall', recall, step=epoch)
-                mlflow.log_metric('F1_Score', f1, step=epoch)
+                mlflow.log_metric('Loss', loss)
+                mlflow.log_metric('Accuracy', acc)
+                mlflow.log_metric('Precision', precision)
+                mlflow.log_metric('Recall', recall)
+                mlflow.log_metric('F1_Score', f1)
+
+                mlflow.log_param("Learning_rate_step", self.scheduler.get_last_lr()[0])
                 
+                early_stopping(self.model, current_loss=loss, current_acc=acc)
+
+                if early_stopping.early_stop:
+                    print('--------조기종료--------')
+                    break
+
+                self.scheduler.step()
+            
+            if early_stopping.model_log_triggered :
+                model_uri = f"runs:/{run.info.run_id}/{artifact_path}"
                 mlflow.pytorch.log_model(self.model, 
                                          artifact_path=artifact_path
                                          )
-                
-                self.scheduler.step()
-            
-            model_uri = f"runs:/{run.info.run_id}/{artifact_path}"
-            mlflow.register_model(model_uri=model_uri, name=model_name)
-            
-            print("Done!")            
+                mlflow.register_model(model_uri=model_uri, name=model_name)
+                print('최소값을 넘겨 모델 등록에 성공하였습니다.')
+            else:
+                print("최소값을 넘지 못해 모델 등록에 실패하였습니다.")
         mlflow.end_run()

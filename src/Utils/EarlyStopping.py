@@ -1,41 +1,32 @@
 import torch
 
 class EarlyStopping:
-    def __init__(self, patience=3, min_delta=0.001):
-        """
-        :param patience: 개선이 없을 때 기다릴 에포크 수
-        :param min_delta: 메트릭 향상을 위한 최소 변화량
-        """
+    def __init__(self, patience=3, delta=0.001, min_loss=0.5, min_acc = 70):
         self.patience = patience
-        self.min_delta = min_delta
-        self.best_score = None
-        self.counter = 0
-        self.best_model = None
+        self.delta = delta
+        self.min_acc = min_acc
+        self.min_loss = min_loss
+        self.best_loss = None
+        self.best_acc = None
+        self.counter=0
         self.early_stop = False
-
-    def __call__(self, model, current_score):
-        """
-        :param model: PyTorch 모델
-        :param current_score: 현재 에포크에서 계산된 평가 메트릭
-        """
-        if self.best_score is None:
-            self.best_score = current_score
-            self.best_model = model.state_dict()
-        elif current_score < self.best_score + self.min_delta:
+        self.model_log_triggered = False
+        
+    def __call__(self, model, current_loss, current_acc):
+        if current_loss <= self.min_loss or current_acc >= self.min_acc:
+            print('조기 종료 조건을 만족하여 모델을 로그하고 학습을 종료합니다.')
+            self.early_stop = True
+            self.model_log_triggered = True
+            return
+        if self.best_loss is None or self.best_acc is None:
+            self.best_loss = current_loss
+            self.best_acc = current_acc
+            #모델 로그하는 코드
+        elif current_loss > self.best_loss - self.delta and current_acc < self.best_acc + self.delta:
             self.counter += 1
-            print(f"No improvement in score for {self.counter} epochs")
             if self.counter >= self.patience:
                 self.early_stop = True
         else:
-            self.best_score = current_score
-            self.best_model = model.state_dict()
+            self.best_loss = current_loss
+            self.best_acc = current_acc
             self.counter = 0
-            print(f"New best model found with score: {current_score:.4f}")
-
-    def load_best_model(self, model):
-        """
-        최고의 모델 가중치로 모델을 복원
-        :param model: PyTorch 모델
-        """
-        model.load_state_dict(self.best_model)
-        return model
