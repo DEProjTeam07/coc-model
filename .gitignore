@@ -8,6 +8,7 @@ inference_dataset/
 app/
 .github/
 
+.old/
 .env
 .Utils
 Inference.py

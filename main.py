@@ -26,16 +26,8 @@ def train_model(dataset_version: str, model_type,
 def production_alias(param):
     production_model_alias(param)
 
-# #운영중인 모델 로드 - 성능이랑 등등
-# def load_production_model(model_type):
-#     pass
-
-# # #운영중인 모델로 추론 서버 띄우기 
-# # def load_inf_server():
-# #     pass
-
 if __name__ == "__main__":
     fire.Fire({
-        'train':train_model,
-        'production': production_alias
+        'Train':train_model,
+        'Production': production_alias
     })
