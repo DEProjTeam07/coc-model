@@ -8,11 +8,17 @@ jobs:
   job1:
     runs-on: self-hosted
     steps:
-       # mlflow 서버가 켜져 있으면 끄는 작업을 한다. 
-       - name: Check if MLflow server is running with absolute path 
+       # mlflow 서버가 켜져 있으면 끄는 작업을 한다. (systemd 방식)
+       - name: Check and stop MLflow server
          run: |
-           echo "MLflow 서버 상태를 확인하는 작업은 보류입니다."
-
+            if sudo systemctl is-active --quiet mlflow; then
+              echo "MLflow 서버가 실행 중이었습니다."
+              echo "Automated Pipeline을 실행해야 되서 재정비를 해야 하므로 Flask 서버를 종료하겠습니다."
+              sudo systemctl stop mlflow
+              echo "MLflow 서버를 중지했습니다."
+            else
+              echo "MLflow 서버가 실행 중이지 않습니다. 별다른 작업을 하지 않습니다."
+            fi
       
        # Flask 서버가 켜져 있으면 끄는 작업을 한다. (systemd 방식)
        - name: Check and stop Flask server
@@ -40,11 +46,27 @@ jobs:
            fi
 
 
-       # mlflow 서버를 켜는 작업을 한다. 
+       # mlflow 서버를 켠다.
+       - name: Start MLflow server
+         run: |
+          echo "MLflow 서버를 시작합니다."
+          sudo systemctl start mlflow
+
+       # MLflow 서버 상태 확인
+       - name: Check MLflow server status
+         run: |
+          echo "MLflow 서버 상태를 확인합니다."
+          sudo systemctl status mlflow
+
+
 
 
 
        # 모델 코드의 시작점인 main.py를 실행해서 Automated Piepline에 이어서 모델 관련 지표, 모델 등록과 관련된 작업을 할 수 있도록 한다. 
+
+
+
+
 
        
 
