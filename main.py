@@ -1,9 +1,10 @@
 import fire
+import mlflow
+mlflow.set_tracking_uri('http://127.0.0.1:5000')
 
 from src.Train import TrainModel
-from src.Utils.LoadTrackingURI import get_tracking_uri
 from src.Utils.ProductionAlias import production_model_alias
-get_tracking_uri()
+
 
 #모델 학습
 def train_model(dataset_version: str, model_type,
@@ -25,6 +26,8 @@ def train_model(dataset_version: str, model_type,
 #학습된 모델의 성능 확인해서 운영 모델 결정
 def production_alias(param):
     production_model_alias(param)
+
+#운영 모델 uri 반환
 
 if __name__ == "__main__":
     fire.Fire({

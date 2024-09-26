@@ -13,7 +13,7 @@ from src.Utils.EarlyStopping import EarlyStopping
 class TrainModel():
     def __init__(self, model_type, model_version, epochs, 
                  optimizer_type, dataset_version, learning_rate, batch_size,
-                 min_loss=1, min_accuracy=0.7):
+                 min_loss=0.3, min_accuracy=70):
         self.model_type = model_type
         self.model_version = model_version
         self.epochs = epochs
@@ -97,9 +97,10 @@ class TrainModel():
     #에포크별 학습
     def run_training(self):
         model_name = self.model.get_model_name()
-        artifact_path = f'models/{model_name}'
+        
         mlflow.set_tag('model_type',model_name)
-        mlflow.set_experiment(f'{model_name}_experiment')
+        mlflow.set_experiment(f'Experiment_{model_name}')
+
         validate_params(self.epochs, self.learning_rate)
         early_stopping = EarlyStopping(min_loss=self.min_loss, min_acc=self.min_accuracy)
 
@@ -109,17 +110,19 @@ class TrainModel():
             mlflow.log_param("learning_rate", self.learning_rate)
             mlflow.log_param("batch_size", self.batch_size)
             mlflow.log_param("optimizer_type", self.optimizer_type)
+            mlflow.log_param("early_stopping_min_loss", self.min_loss)
+            mlflow.log_param("early_stopping_min_accuracy", self.min_accuracy)
 
             for epoch in range(self.epochs):
                 print(f"Epoch {epoch + 1}/{self.epochs}\n--------------------------")
                 self.train_model()
                 loss, acc, precision, recall, f1 = self.test_model()
-
-                mlflow.log_metric('Loss', loss)
-                mlflow.log_metric('Accuracy', acc)
-                mlflow.log_metric('Precision', precision)
-                mlflow.log_metric('Recall', recall)
-                mlflow.log_metric('F1_Score', f1)
+                print(f"loss : {loss}, acc : {acc}")
+                mlflow.log_metric('Loss', loss, step=epoch)
+                mlflow.log_metric('Accuracy', acc, step=epoch)
+                mlflow.log_metric('Precision', precision, step=epoch)
+                mlflow.log_metric('Recall', recall, step=epoch)
+                mlflow.log_metric('F1_Score', f1, step=epoch)
 
                 mlflow.log_param("Learning_rate_step", self.scheduler.get_last_lr()[0])
                 
@@ -132,11 +135,12 @@ class TrainModel():
                 self.scheduler.step()
             
             if early_stopping.model_log_triggered :
-                model_uri = f"runs:/{run.info.run_id}/{artifact_path}"
+                artifact_path = f'{model_name}'
                 mlflow.pytorch.log_model(self.model, 
                                          artifact_path=artifact_path
                                          )
-                mlflow.register_model(model_uri=model_uri, name=model_name)
+                model_uri = f"runs:/{run.info.run_id}/{artifact_path}"
+                mlflow.register_model(model_uri=model_uri, name='Test', tags={"model_name":model_name})
                 print('최소값을 넘겨 모델 등록에 성공하였습니다.')
             else:
                 print("최소값을 넘지 못해 모델 등록에 실패하였습니다.")

@@ -13,11 +13,12 @@ class EarlyStopping:
         self.model_log_triggered = False
         
     def __call__(self, model, current_loss, current_acc):
-        if current_loss <= self.min_loss or current_acc >= self.min_acc:
+        if current_loss <= self.min_loss and current_acc >= self.min_acc:
             print('조기 종료 조건을 만족하여 모델을 로그하고 학습을 종료합니다.')
             self.early_stop = True
             self.model_log_triggered = True
             return
+        
         if self.best_loss is None or self.best_acc is None:
             self.best_loss = current_loss
             self.best_acc = current_acc
