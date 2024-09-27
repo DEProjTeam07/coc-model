@@ -1,1 +1,28 @@
+name: MLflow Server Start
 
+on:
+  workflow_dispatch:
+
+jobs:
+  job1:
+    runs-on: self-hosted
+    env:
+      DISABLE_RUNNER_CLEANUP: 'true' # Disable automatic cleanup
+    steps:
+      # Python 환경 설정: pyenv 가상 환경 활성화
+      - name: Set up Python environment with pyenv
+        run: |
+          echo "pyenv 환경을 설정합니다."
+          pyenv activate youngwoo-env
+      
+      # 가상 환경이 제대로 활성화되었는지 확인
+      - name: Verify Python environment
+        run: |
+          echo "현재 활성화된 Python 환경을 확인합니다."
+          pyenv version
+
+      # MLflow 서버를 지정된 호스트와 포트로 nohup으로 백그라운드에서 실행, 로그를 지정된 디렉터리에 기록
+      - name: Run MLflow server in background
+        run: |
+          echo "MLflow 서버를 0.0.0.0:5003에서 백그라운드로 실행하고 로그를 /home/ubuntu/youngwoo-flask-app/mlflow.log에 기록합니다."
+          nohup mlflow server --host 0.0.0.0 --port 5003 > /home/ubuntu/youngwoo-flask-app/mlflow.log 2>&1 &
