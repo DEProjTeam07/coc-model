@@ -7,12 +7,9 @@ jobs:
   job1:
     runs-on: self-hosted
     env:
-      DISABLE_RUNNER_CLEANUP: 'true' # Disable automatic cleanup
+      DISABLE_RUNNER_CLEANUP: 'true'  # Disable automatic cleanup to prevent process cleanup
     steps:
-      # Flask 서버를 가상 환경의 Python 바이너리로 nohup으로 백그라운드에서 실행, 로그를 지정된 디렉터리에 기록
       - name: Run Flask server in background
         run: |
           echo "Flask 서버를 백그라운드에서 실행하고 로그를 /home/ubuntu/youngwoo-flask-app/flask.log에 기록합니다."
-          nohup /home/ubuntu/.pyenv/versions/youngwoo-env/bin/python /home/ubuntu/youngwoo-flask-app/backend_app_v1.py > /home/ubuntu/youngwoo-flask-app/flask.log 2>&1 &
-      
-    
+          nohup /home/ubuntu/.pyenv/versions/youngwoo-env/bin/python /home/ubuntu/youngwoo-flask-app/backend_app_v1.py > /home/ubuntu/youngwoo-flask-app/flask.log 2>&1 & disown
