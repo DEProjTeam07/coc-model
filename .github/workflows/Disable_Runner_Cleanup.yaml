@@ -9,25 +9,8 @@ jobs:
     env:
       DISABLE_RUNNER_CLEANUP: 'true' # Disable automatic cleanup
     steps:
-      # pyenv 초기화 및 가상 환경 설정
-      - name: Initialize pyenv and activate virtual environment
-        run: |
-          echo "pyenv와 가상 환경을 초기화합니다."
-          export PYENV_ROOT="$HOME/.pyenv"
-          export PATH="$PYENV_ROOT/bin:$PATH"
-          eval "$(pyenv init --path)"
-          eval "$(pyenv init -)"
-          eval "$(pyenv virtualenv-init -)"
-          pyenv activate youngwoo-env
-
-      # 가상 환경이 제대로 활성화되었는지 확인
-      - name: Verify Python environment
-        run: |
-          echo "현재 활성화된 Python 환경을 확인합니다."
-          pyenv version
-
-      # MLflow 서버를 지정된 호스트와 포트로 nohup으로 백그라운드에서 실행, 로그를 지정된 디렉터리에 기록
+      # MLflow 서버를 가상 환경의 mlflow 바이너리로 nohup으로 백그라운드에서 실행, 로그를 지정된 디렉터리에 기록
       - name: Run MLflow server in background
         run: |
           echo "MLflow 서버를 0.0.0.0:5003에서 백그라운드로 실행하고 로그를 /home/ubuntu/youngwoo-flask-app/mlflow.log에 기록합니다."
-          nohup mlflow server --host 0.0.0.0 --port 5003 > /home/ubuntu/youngwoo-flask-app/mlflow.log 2>&1 &
+          nohup /home/ubuntu/.pyenv/versions/youngwoo-env/bin/mlflow server --host 0.0.0.0 --port 5003 > /home/ubuntu/youngwoo-flask-app/mlflow.log 2>&1 &
