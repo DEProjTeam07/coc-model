@@ -6,6 +6,8 @@ on:
 jobs:
   job1:
     runs-on: self-hosted
+    env:
+      DISABLE_RUNNER_CLEANUP: 'true' # Disable automatic cleanup
     steps:
       # MLflow 서버를 가상 환경의 mlflow 바이너리로 nohup으로 백그라운드에서 실행, 로그를 지정된 디렉터리에 기록
       - name: Run MLflow server in background
