@@ -1,0 +1,330 @@
+[2024-09-26 01:35:01 +0000] [14647] [INFO] Starting gunicorn 23.0.0
+[2024-09-26 01:35:01 +0000] [14647] [INFO] Listening at: http://0.0.0.0:5003 (14647)
+[2024-09-26 01:35:01 +0000] [14647] [INFO] Using worker: sync
+[2024-09-26 01:35:01 +0000] [14648] [INFO] Booting worker with pid: 14648
+[2024-09-26 01:35:01 +0000] [14649] [INFO] Booting worker with pid: 14649
+[2024-09-26 01:35:01 +0000] [14650] [INFO] Booting worker with pid: 14650
+[2024-09-26 01:35:01 +0000] [14651] [INFO] Booting worker with pid: 14651
+[2024-09-26 01:35:22 +0000] [14647] [INFO] Handling signal: term
+[2024-09-26 01:35:22 +0000] [14650] [INFO] Worker exiting (pid: 14650)
+[2024-09-26 01:35:22 +0000] [14651] [INFO] Worker exiting (pid: 14651)
+[2024-09-26 01:35:22 +0000] [14649] [INFO] Worker exiting (pid: 14649)
+[2024-09-26 01:35:22 +0000] [14648] [INFO] Worker exiting (pid: 14648)
+[2024-09-26 01:35:22 +0000] [14647] [ERROR] Worker (pid:14649) was sent SIGTERM!
+[2024-09-26 01:35:22 +0000] [14647] [ERROR] Worker (pid:14650) was sent SIGTERM!
+--- Logging error ---
+[2024-09-26 01:35:22 +0000] [14647] [ERROR] Worker (pid:14651) was sent SIGTERM!
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 223, in run
+    handler()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 256, in handle_term
+    raise StopIteration
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+RuntimeError: reentrant call inside <_io.BufferedWriter name='<stderr>'>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 553, in reap_workers
+    self.log.error(msg)
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/glogging.py", line 271, in error
+    self.error_log.error(msg, *args, **kwargs)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1518, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1634, in _log
+    self.handle(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1644, in handle
+    self.callHandlers(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1706, in callHandlers
+    hdlr.handle(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 978, in handle
+    self.emit(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1118, in emit
+    self.handleError(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1031, in handleError
+    sys.stderr.write('--- Logging error ---\n')
+RuntimeError: reentrant call inside <_io.BufferedWriter name='<stderr>'>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/__main__.py", line 10, in <module>
+    run(prog="gunicorn")
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/app/base.py", line 235, in run
+    super().run()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/app/base.py", line 71, in run
+    Arbiter(self).run()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 226, in run
+    self.halt()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 341, in halt
+    self.stop()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 395, in stop
+    time.sleep(0.1)
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 553, in reap_workers
+    self.log.error(msg)
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/glogging.py", line 271, in error
+    self.error_log.error(msg, *args, **kwargs)
+Message: 'Worker (pid:14650) was sent SIGTERM!'
+Arguments: ()
+[2024-09-26 01:35:52 +0000] [14647] [INFO] Shutting down: Master
+[2024-09-26 01:42:48 +0000] [16388] [INFO] Starting gunicorn 23.0.0
+[2024-09-26 01:42:48 +0000] [16388] [INFO] Listening at: http://0.0.0.0:5003 (16388)
+[2024-09-26 01:42:48 +0000] [16388] [INFO] Using worker: sync
+[2024-09-26 01:42:48 +0000] [16405] [INFO] Booting worker with pid: 16405
+[2024-09-26 01:42:48 +0000] [16408] [INFO] Booting worker with pid: 16408
+[2024-09-26 01:42:48 +0000] [16409] [INFO] Booting worker with pid: 16409
+[2024-09-26 01:42:48 +0000] [16410] [INFO] Booting worker with pid: 16410
+[2024-09-26 04:37:24 +0000] [16408] [INFO] Worker exiting (pid: 16408)
+[2024-09-26 04:37:24 +0000] [16405] [INFO] Worker exiting (pid: 16405)
+[2024-09-26 04:37:24 +0000] [16388] [INFO] Handling signal: term
+[2024-09-26 04:37:24 +0000] [16409] [INFO] Worker exiting (pid: 16409)
+[2024-09-26 04:37:24 +0000] [16410] [INFO] Worker exiting (pid: 16410)
+[2024-09-26 04:37:24 +0000] [16388] [ERROR] Worker (pid:16408) was sent SIGTERM!
+[2024-09-26 04:37:24 +0000] [16388] [ERROR] Worker (pid:16409) was sent SIGTERM!
+[2024-09-26 04:37:24 +0000] [16388] [ERROR] Worker (pid:16410) was sent SIGTERM!
+[2024-09-26 04:37:24 +0000] [16388] [ERROR] Worker (pid:16405) was sent SIGTERM!
+[2024-09-26 04:37:24 +0000] [16388] [INFO] Shutting down: Master
+[2024-09-26 04:37:27 +0000] [37920] [INFO] Starting gunicorn 23.0.0
+[2024-09-26 04:37:27 +0000] [37920] [INFO] Listening at: http://0.0.0.0:5003 (37920)
+[2024-09-26 04:37:27 +0000] [37920] [INFO] Using worker: sync
+[2024-09-26 04:37:27 +0000] [37921] [INFO] Booting worker with pid: 37921
+[2024-09-26 04:37:27 +0000] [37922] [INFO] Booting worker with pid: 37922
+[2024-09-26 04:37:27 +0000] [37923] [INFO] Booting worker with pid: 37923
+[2024-09-26 04:37:27 +0000] [37924] [INFO] Booting worker with pid: 37924
+[2024-09-26 08:29:17 +0000] [37921] [INFO] Worker exiting (pid: 37921)
+[2024-09-26 08:29:17 +0000] [37920] [INFO] Handling signal: term
+[2024-09-26 08:29:17 +0000] [37922] [INFO] Worker exiting (pid: 37922)
+[2024-09-26 08:29:17 +0000] [37924] [INFO] Worker exiting (pid: 37924)
+[2024-09-26 08:29:17 +0000] [37923] [INFO] Worker exiting (pid: 37923)
+[2024-09-26 08:29:17 +0000] [37920] [ERROR] Worker (pid:37924) was sent SIGTERM!
+[2024-09-26 08:29:17 +0000] [37920] [ERROR] Worker (pid:37922) was sent SIGTERM!
+[2024-09-26 08:29:17 +0000] [37920] [ERROR] Worker (pid:37923) was sent SIGTERM!
+[2024-09-26 08:29:17 +0000] [37920] [ERROR] Worker (pid:37921) was sent SIGTERM!
+[2024-09-26 08:29:17 +0000] [37920] [INFO] Shutting down: Master
+[2024-09-27 00:44:08 +0000] [1183] [INFO] Starting gunicorn 23.0.0
+[2024-09-27 00:44:08 +0000] [1183] [INFO] Listening at: http://0.0.0.0:5003 (1183)
+[2024-09-27 00:44:08 +0000] [1183] [INFO] Using worker: sync
+[2024-09-27 00:44:08 +0000] [1184] [INFO] Booting worker with pid: 1184
+[2024-09-27 00:44:08 +0000] [1189] [INFO] Booting worker with pid: 1189
+[2024-09-27 00:44:08 +0000] [1190] [INFO] Booting worker with pid: 1190
+[2024-09-27 00:44:08 +0000] [1191] [INFO] Booting worker with pid: 1191
+[2024-09-27 02:01:46 +0000] [1189] [INFO] Worker exiting (pid: 1189)
+[2024-09-27 02:01:46 +0000] [1184] [INFO] Worker exiting (pid: 1184)
+[2024-09-27 02:01:46 +0000] [1183] [INFO] Handling signal: term
+[2024-09-27 02:01:46 +0000] [1191] [INFO] Worker exiting (pid: 1191)
+[2024-09-27 02:01:46 +0000] [1190] [INFO] Worker exiting (pid: 1190)
+[2024-09-27 02:01:46 +0000] [1183] [ERROR] Worker (pid:1191) was sent SIGTERM!
+--- Logging error ---
+
+Error: reentrant call inside <_io.BufferedWriter name='<stderr>'>
+
+[2024-09-27 02:26:18 +0000] [18515] [INFO] Starting gunicorn 23.0.0
+[2024-09-27 02:26:18 +0000] [18515] [INFO] Listening at: http://0.0.0.0:5003 (18515)
+[2024-09-27 02:26:18 +0000] [18515] [INFO] Using worker: sync
+[2024-09-27 02:26:18 +0000] [18519] [INFO] Booting worker with pid: 18519
+[2024-09-27 02:26:18 +0000] [18520] [INFO] Booting worker with pid: 18520
+[2024-09-27 02:26:18 +0000] [18521] [INFO] Booting worker with pid: 18521
+[2024-09-27 02:26:18 +0000] [18522] [INFO] Booting worker with pid: 18522
+[2024-09-27 02:30:02 +0000] [18515] [INFO] Handling signal: term
+[2024-09-27 02:30:02 +0000] [18521] [INFO] Worker exiting (pid: 18521)
+[2024-09-27 02:30:02 +0000] [18522] [INFO] Worker exiting (pid: 18522)
+[2024-09-27 02:30:02 +0000] [18519] [INFO] Worker exiting (pid: 18519)
+[2024-09-27 02:30:02 +0000] [18520] [INFO] Worker exiting (pid: 18520)
+[2024-09-27 02:30:02 +0000] [18515] [ERROR] Worker (pid:18520) was sent SIGTERM!
+[2024-09-27 02:30:02 +0000] [18515] [ERROR] Worker (pid:18522) was sent SIGTERM!
+[2024-09-27 02:30:02 +0000] [18515] [ERROR] Worker (pid:18521) was sent SIGTERM!
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 223, in run
+    handler()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 256, in handle_term
+    raise StopIteration
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+RuntimeError: reentrant call inside <_io.BufferedWriter name='<stderr>'>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 553, in reap_workers
+    self.log.error(msg)
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/glogging.py", line 271, in error
+    self.error_log.error(msg, *args, **kwargs)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1518, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1634, in _log
+    self.handle(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1644, in handle
+    self.callHandlers(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1706, in callHandlers
+    hdlr.handle(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 978, in handle
+    self.emit(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1118, in emit
+    self.handleError(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1031, in handleError
+    sys.stderr.write('--- Logging error ---\n')
+RuntimeError: reentrant call inside <_io.BufferedWriter name='<stderr>'>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/__main__.py", line 10, in <module>
+    run(prog="gunicorn")
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/app/base.py", line 235, in run
+    super().run()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/app/base.py", line 71, in run
+    Arbiter(self).run()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 226, in run
+    self.halt()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 341, in halt
+    self.stop()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 395, in stop
+    time.sleep(0.1)
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 553, in reap_workers
+    self.log.error(msg)
+  File "/home/ubuntu/.pyenv/versions/youngwoo-env/lib/python3.11/site-packages/gunicorn/glogging.py", line 271, in error
+    self.error_log.error(msg, *args, **kwargs)
+Message: 'Worker (pid:18521) was sent SIGTERM!'
+Arguments: ()
+[2024-09-27 02:30:32 +0000] [18515] [INFO] Shutting down: Master
+[2024-09-27 04:31:30 +0000] [35248] [INFO] Starting gunicorn 23.0.0
+[2024-09-27 04:31:30 +0000] [35248] [INFO] Listening at: http://0.0.0.0:5003 (35248)
+[2024-09-27 04:31:30 +0000] [35248] [INFO] Using worker: sync
+[2024-09-27 04:31:30 +0000] [35249] [INFO] Booting worker with pid: 35249
+[2024-09-27 04:31:30 +0000] [35250] [INFO] Booting worker with pid: 35250
+[2024-09-27 04:31:30 +0000] [35251] [INFO] Booting worker with pid: 35251
+[2024-09-27 04:31:30 +0000] [35252] [INFO] Booting worker with pid: 35252
+[2024-09-27 04:37:58 +0000] [35250] [INFO] Worker exiting (pid: 35250)
+[2024-09-27 04:37:58 +0000] [35249] [INFO] Worker exiting (pid: 35249)
+[2024-09-27 04:37:58 +0000] [35248] [INFO] Handling signal: term
+[2024-09-27 04:37:58 +0000] [35251] [INFO] Worker exiting (pid: 35251)
+[2024-09-27 04:37:58 +0000] [35252] [INFO] Worker exiting (pid: 35252)
+[2024-09-27 04:37:59 +0000] [35248] [ERROR] Worker (pid:35250) was sent SIGTERM!
+--- Logging error ---
+[2024-09-27 04:37:59 +0000] [35248] [ERROR] Worker (pid:35249) was sent SIGTERM!
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 223, in run
+    handler()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 256, in handle_term
+    raise StopIteration
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+RuntimeError: reentrant call inside <_io.BufferedWriter name='<stderr>'>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 553, in reap_workers
+    self.log.error(msg)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/glogging.py", line 271, in error
+    self.error_log.error(msg, *args, **kwargs)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1518, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1632, in _log
+    record = self.makeRecord(self.name, level, fn, lno, msg, args,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1601, in makeRecord
+    rv = _logRecordFactory(name, level, fn, lno, msg, args, exc_info, func,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 349, in __init__
+    mp = sys.modules.get('multiprocessing')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 553, in reap_workers
+    self.log.error(msg)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/glogging.py", line 271, in error
+    self.error_log.error(msg, *args, **kwargs)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1518, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1634, in _log
+    self.handle(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1644, in handle
+    self.callHandlers(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1706, in callHandlers
+    hdlr.handle(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 978, in handle
+    self.emit(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1118, in emit
+    self.handleError(record)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/logging/__init__.py", line 1031, in handleError
+    sys.stderr.write('--- Logging error ---\n')
+RuntimeError: reentrant call inside <_io.BufferedWriter name='<stderr>'>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/__main__.py", line 10, in <module>
+    run(prog="gunicorn")
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/app/base.py", line 235, in run
+    super().run()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/app/base.py", line 71, in run
+    Arbiter(self).run()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 226, in run
+    self.halt()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 341, in halt
+    self.stop()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 395, in stop
+    time.sleep(0.1)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/arbiter.py", line 553, in reap_workers
+    self.log.error(msg)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/envs/deployment_env/lib/python3.11/site-packages/gunicorn/glogging.py", line 271, in error
+    self.error_log.error(msg, *args, **kwargs)
+Message: 'Worker (pid:35250) was sent SIGTERM!'
+Arguments: ()
+[2024-09-27 04:38:28 +0000] [35248] [INFO] Shutting down: Master
+[2024-09-27 08:05:42 +0000] [49110] [INFO] Starting gunicorn 23.0.0
+[2024-09-27 08:05:42 +0000] [49110] [INFO] Listening at: http://0.0.0.0:5003 (49110)
+[2024-09-27 08:05:42 +0000] [49110] [INFO] Using worker: sync
+[2024-09-27 08:05:42 +0000] [49111] [INFO] Booting worker with pid: 49111
+[2024-09-27 08:05:42 +0000] [49112] [INFO] Booting worker with pid: 49112
+[2024-09-27 08:05:42 +0000] [49113] [INFO] Booting worker with pid: 49113
+[2024-09-27 08:05:42 +0000] [49114] [INFO] Booting worker with pid: 49114
+[2024-09-27 08:18:32 +0000] [49111] [INFO] Worker exiting (pid: 49111)
+[2024-09-27 08:18:32 +0000] [49114] [INFO] Worker exiting (pid: 49114)
+[2024-09-27 08:18:32 +0000] [49113] [INFO] Worker exiting (pid: 49113)
+[2024-09-27 08:18:32 +0000] [49110] [INFO] Handling signal: term
+[2024-09-27 08:18:32 +0000] [49112] [INFO] Worker exiting (pid: 49112)
+[2024-09-27 08:18:32 +0000] [49110] [ERROR] Worker (pid:49111) was sent SIGTERM!
+[2024-09-27 08:18:32 +0000] [49110] [ERROR] Worker (pid:49114) was sent SIGTERM!
+[2024-09-27 08:18:32 +0000] [49110] [ERROR] Worker (pid:49113) was sent SIGTERM!
+[2024-09-27 08:18:32 +0000] [49110] [ERROR] Worker (pid:49112) was sent SIGTERM!
+[2024-09-27 08:18:32 +0000] [49110] [INFO] Shutting down: Master
