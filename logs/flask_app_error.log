@@ -3688,3 +3688,593 @@ INFO:werkzeug: * Restarting with watchdog (inotify)
 WARNING:werkzeug: * Debugger is active!
 INFO:werkzeug: * Debugger PIN: 738-505-616
 INFO:werkzeug:172.31.15.63 - - [27/Sep/2024 08:09:36] "POST /predict HTTP/1.1" 200 -
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 199, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 495, in _make_request
+    conn.request(
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 441, in request
+    self.endheaders()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1298, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1058, in _send_output
+    self.send(msg)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 996, in send
+    self.connect()
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 279, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 214, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x74ed711d1cd0>: Failed to establish a new connection: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x74ed711d1cd0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 189, in http_request
+    return _get_http_response_with_retries(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/request_utils.py", line 237, in _get_http_response_with_retries
+    return session.request(method, url, allow_redirects=allow_redirects, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x74ed711d1cd0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/deployment/coc-model/flask_app.py", line 22, in <module>
+    model = mlflow.pytorch.load_model(model_uri=f"models:/{model_name}/{model_version}")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/pytorch/__init__.py", line 682, in load_model
+    local_model_path = _download_artifact_from_uri(artifact_uri=model_uri, output_path=dst_path)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/artifact_utils.py", line 108, in _download_artifact_from_uri
+    repo = get_artifact_repository(artifact_uri=root_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 132, in get_artifact_repository
+    return _artifact_repository_registry.get_artifact_repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 77, in get_artifact_repository
+    return repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 69, in __init__
+    ) = ModelsArtifactRepository._get_model_uri_infos(artifact_uri)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 104, in _get_model_uri_infos
+    download_uri = client.get_model_version_download_uri(name, version)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/client.py", line 4153, in get_model_version_download_uri
+    return self._get_registry_client().get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/_model_registry/client.py", line 316, in get_model_version_download_uri
+    return self.store.get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/rest_store.py", line 360, in get_model_version_download_uri
+    response_proto = self._call_endpoint(GetModelVersionDownloadUri, req_body)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/base_rest_store.py", line 44, in _call_endpoint
+    return call_endpoint(
+           ^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 365, in call_endpoint
+    response = http_request(**call_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 212, in http_request
+    raise MlflowException(f"API request to {url} failed with exception {e}")
+mlflow.exceptions.MlflowException: API request to http://127.0.0.1:5000/api/2.0/mlflow/model-versions/get-download-uri failed with exception HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x74ed711d1cd0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 199, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 495, in _make_request
+    conn.request(
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 441, in request
+    self.endheaders()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1298, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1058, in _send_output
+    self.send(msg)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 996, in send
+    self.connect()
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 279, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 214, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x77361bddc050>: Failed to establish a new connection: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x77361bddc050>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 189, in http_request
+    return _get_http_response_with_retries(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/request_utils.py", line 237, in _get_http_response_with_retries
+    return session.request(method, url, allow_redirects=allow_redirects, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x77361bddc050>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/deployment/coc-model/flask_app.py", line 22, in <module>
+    model = mlflow.pytorch.load_model(model_uri=f"models:/{model_name}/{model_version}")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/pytorch/__init__.py", line 682, in load_model
+    local_model_path = _download_artifact_from_uri(artifact_uri=model_uri, output_path=dst_path)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/artifact_utils.py", line 108, in _download_artifact_from_uri
+    repo = get_artifact_repository(artifact_uri=root_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 132, in get_artifact_repository
+    return _artifact_repository_registry.get_artifact_repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 77, in get_artifact_repository
+    return repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 69, in __init__
+    ) = ModelsArtifactRepository._get_model_uri_infos(artifact_uri)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 104, in _get_model_uri_infos
+    download_uri = client.get_model_version_download_uri(name, version)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/client.py", line 4153, in get_model_version_download_uri
+    return self._get_registry_client().get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/_model_registry/client.py", line 316, in get_model_version_download_uri
+    return self.store.get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/rest_store.py", line 360, in get_model_version_download_uri
+    response_proto = self._call_endpoint(GetModelVersionDownloadUri, req_body)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/base_rest_store.py", line 44, in _call_endpoint
+    return call_endpoint(
+           ^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 365, in call_endpoint
+    response = http_request(**call_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 212, in http_request
+    raise MlflowException(f"API request to {url} failed with exception {e}")
+mlflow.exceptions.MlflowException: API request to http://127.0.0.1:5000/api/2.0/mlflow/model-versions/get-download-uri failed with exception HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x77361bddc050>: Failed to establish a new connection: [Errno 111] Connection refused'))
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 199, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 495, in _make_request
+    conn.request(
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 441, in request
+    self.endheaders()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1298, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1058, in _send_output
+    self.send(msg)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 996, in send
+    self.connect()
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 279, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 214, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x79cfb2eeead0>: Failed to establish a new connection: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x79cfb2eeead0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 189, in http_request
+    return _get_http_response_with_retries(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/request_utils.py", line 237, in _get_http_response_with_retries
+    return session.request(method, url, allow_redirects=allow_redirects, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x79cfb2eeead0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/deployment/coc-model/flask_app.py", line 22, in <module>
+    model = mlflow.pytorch.load_model(model_uri=f"models:/{model_name}/{model_version}")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/pytorch/__init__.py", line 682, in load_model
+    local_model_path = _download_artifact_from_uri(artifact_uri=model_uri, output_path=dst_path)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/artifact_utils.py", line 108, in _download_artifact_from_uri
+    repo = get_artifact_repository(artifact_uri=root_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 132, in get_artifact_repository
+    return _artifact_repository_registry.get_artifact_repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 77, in get_artifact_repository
+    return repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 69, in __init__
+    ) = ModelsArtifactRepository._get_model_uri_infos(artifact_uri)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 104, in _get_model_uri_infos
+    download_uri = client.get_model_version_download_uri(name, version)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/client.py", line 4153, in get_model_version_download_uri
+    return self._get_registry_client().get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/_model_registry/client.py", line 316, in get_model_version_download_uri
+    return self.store.get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/rest_store.py", line 360, in get_model_version_download_uri
+    response_proto = self._call_endpoint(GetModelVersionDownloadUri, req_body)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/base_rest_store.py", line 44, in _call_endpoint
+    return call_endpoint(
+           ^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 365, in call_endpoint
+    response = http_request(**call_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 212, in http_request
+    raise MlflowException(f"API request to {url} failed with exception {e}")
+mlflow.exceptions.MlflowException: API request to http://127.0.0.1:5000/api/2.0/mlflow/model-versions/get-download-uri failed with exception HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x79cfb2eeead0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 199, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 495, in _make_request
+    conn.request(
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 441, in request
+    self.endheaders()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1298, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1058, in _send_output
+    self.send(msg)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 996, in send
+    self.connect()
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 279, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 214, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x75d2df1e0090>: Failed to establish a new connection: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x75d2df1e0090>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 189, in http_request
+    return _get_http_response_with_retries(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/request_utils.py", line 237, in _get_http_response_with_retries
+    return session.request(method, url, allow_redirects=allow_redirects, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x75d2df1e0090>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/deployment/coc-model/flask_app.py", line 22, in <module>
+    model = mlflow.pytorch.load_model(model_uri=f"models:/{model_name}/{model_version}")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/pytorch/__init__.py", line 682, in load_model
+    local_model_path = _download_artifact_from_uri(artifact_uri=model_uri, output_path=dst_path)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/artifact_utils.py", line 108, in _download_artifact_from_uri
+    repo = get_artifact_repository(artifact_uri=root_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 132, in get_artifact_repository
+    return _artifact_repository_registry.get_artifact_repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 77, in get_artifact_repository
+    return repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 69, in __init__
+    ) = ModelsArtifactRepository._get_model_uri_infos(artifact_uri)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 104, in _get_model_uri_infos
+    download_uri = client.get_model_version_download_uri(name, version)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/client.py", line 4153, in get_model_version_download_uri
+    return self._get_registry_client().get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/_model_registry/client.py", line 316, in get_model_version_download_uri
+    return self.store.get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/rest_store.py", line 360, in get_model_version_download_uri
+    response_proto = self._call_endpoint(GetModelVersionDownloadUri, req_body)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/base_rest_store.py", line 44, in _call_endpoint
+    return call_endpoint(
+           ^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 365, in call_endpoint
+    response = http_request(**call_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 212, in http_request
+    raise MlflowException(f"API request to {url} failed with exception {e}")
+mlflow.exceptions.MlflowException: API request to http://127.0.0.1:5000/api/2.0/mlflow/model-versions/get-download-uri failed with exception HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x75d2df1e0090>: Failed to establish a new connection: [Errno 111] Connection refused'))
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 199, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 495, in _make_request
+    conn.request(
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 441, in request
+    self.endheaders()
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1298, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 1058, in _send_output
+    self.send(msg)
+  File "/home/ubuntu/.pyenv/versions/3.11.9/lib/python3.11/http/client.py", line 996, in send
+    self.connect()
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 279, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connection.py", line 214, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7d0d98ece3d0>: Failed to establish a new connection: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 873, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7d0d98ece3d0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 189, in http_request
+    return _get_http_response_with_retries(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/request_utils.py", line 237, in _get_http_response_with_retries
+    return session.request(method, url, allow_redirects=allow_redirects, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7d0d98ece3d0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/deployment/coc-model/flask_app.py", line 22, in <module>
+    model = mlflow.pytorch.load_model(model_uri=f"models:/{model_name}/{model_version}")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/pytorch/__init__.py", line 682, in load_model
+    local_model_path = _download_artifact_from_uri(artifact_uri=model_uri, output_path=dst_path)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/artifact_utils.py", line 108, in _download_artifact_from_uri
+    repo = get_artifact_repository(artifact_uri=root_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 132, in get_artifact_repository
+    return _artifact_repository_registry.get_artifact_repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/artifact_repository_registry.py", line 77, in get_artifact_repository
+    return repository(artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 69, in __init__
+    ) = ModelsArtifactRepository._get_model_uri_infos(artifact_uri)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/artifact/models_artifact_repo.py", line 104, in _get_model_uri_infos
+    download_uri = client.get_model_version_download_uri(name, version)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/client.py", line 4153, in get_model_version_download_uri
+    return self._get_registry_client().get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/tracking/_model_registry/client.py", line 316, in get_model_version_download_uri
+    return self.store.get_model_version_download_uri(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/rest_store.py", line 360, in get_model_version_download_uri
+    response_proto = self._call_endpoint(GetModelVersionDownloadUri, req_body)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/store/model_registry/base_rest_store.py", line 44, in _call_endpoint
+    return call_endpoint(
+           ^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 365, in call_endpoint
+    response = http_request(**call_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.pyenv/versions/deployment_env/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 212, in http_request
+    raise MlflowException(f"API request to {url} failed with exception {e}")
+mlflow.exceptions.MlflowException: API request to http://127.0.0.1:5000/api/2.0/mlflow/model-versions/get-download-uri failed with exception HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /api/2.0/mlflow/model-versions/get-download-uri?name=Test&version=1 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7d0d98ece3d0>: Failed to establish a new connection: [Errno 111] Connection refused'))

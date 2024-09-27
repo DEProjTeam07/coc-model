@@ -328,3 +328,10 @@ Arguments: ()
 [2024-09-27 08:18:32 +0000] [49110] [ERROR] Worker (pid:49113) was sent SIGTERM!
 [2024-09-27 08:18:32 +0000] [49110] [ERROR] Worker (pid:49112) was sent SIGTERM!
 [2024-09-27 08:18:32 +0000] [49110] [INFO] Shutting down: Master
+[2024-09-27 10:00:57 +0000] [1186] [INFO] Starting gunicorn 23.0.0
+[2024-09-27 10:00:57 +0000] [1186] [INFO] Listening at: http://0.0.0.0:5003 (1186)
+[2024-09-27 10:00:57 +0000] [1186] [INFO] Using worker: sync
+[2024-09-27 10:00:57 +0000] [1187] [INFO] Booting worker with pid: 1187
+[2024-09-27 10:00:57 +0000] [1188] [INFO] Booting worker with pid: 1188
+[2024-09-27 10:00:57 +0000] [1189] [INFO] Booting worker with pid: 1189
+[2024-09-27 10:00:57 +0000] [1190] [INFO] Booting worker with pid: 1190
