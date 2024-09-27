@@ -1,9 +1,13 @@
 # 타이어 결함 이미지 분류하기
-타이어 이미지를 받아 결함 여부를 판단해주는 모델 관리합니다.
+타이어 이미지를 받아 결함 여부를 판단해주는 모델을 관리합니다.
 
 ### 명령어 예시
 ```
-python main.py train --dataset_version split_1 --model_type cnn --optimizer_type adam --epochs 10 --learning_rate 0.01 --batch_size 32
+python main.py Train --dataset_version split_1 --model_type cnn --optimizer_type adam --epochs 10 --learning_rate 0.01 --batch_size 32
+python main.py Stage Loss
+python main.py Produce Loss
+python main.py ProductionInfo
+
 ```
 
 ## 모델링 아키텍처
