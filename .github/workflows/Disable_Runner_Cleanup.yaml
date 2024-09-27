@@ -1,4 +1,4 @@
-name: MLflow Server Start
+name: Flask Server Start
 
 on:
   workflow_dispatch:
@@ -9,8 +9,10 @@ jobs:
     env:
       DISABLE_RUNNER_CLEANUP: 'true' # Disable automatic cleanup
     steps:
-      # MLflow 서버를 가상 환경의 mlflow 바이너리로 nohup으로 백그라운드에서 실행, 로그를 지정된 디렉터리에 기록
-      - name: Run MLflow server in background
+      # Flask 서버를 가상 환경의 Python 바이너리로 nohup으로 백그라운드에서 실행, 로그를 지정된 디렉터리에 기록
+      - name: Run Flask server in background
         run: |
-          echo "MLflow 서버를 0.0.0.0:5003에서 백그라운드로 실행하고 로그를 /home/ubuntu/youngwoo-flask-app/mlflow.log에 기록합니다."
-          setsid /home/ubuntu/.pyenv/versions/youngwoo-env/bin/mlflow server --host 0.0.0.0 --port 5003 > /home/ubuntu/youngwoo-flask-app/mlflow.log 2>&1 &
+          echo "Flask 서버를 백그라운드에서 실행하고 로그를 /home/ubuntu/youngwoo-flask-app/flask.log에 기록합니다."
+          nohup /home/ubuntu/.pyenv/versions/youngwoo-env/bin/python /home/ubuntu/youngwoo-flask-app/backend_app_v1.py > /home/ubuntu/youngwoo-flask-app/flask.log 2>&1 &
+      
+    
