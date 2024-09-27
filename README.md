@@ -1,12 +1,20 @@
 # 타이어 결함 이미지 분류하기
+타이어 이미지를 받아 결함 여부를 판단해주는 모델 관리합니다.
 
-mlops 프로세스
+### 명령어 예시
+```
+python main.py train --dataset_version split_1 --model_type cnn --optimizer_type adam --epochs 10 --learning_rate 0.01 --batch_size 32
+```
 
+## 모델링 아키텍처
 
-## 1. EDA
+![아키텍처](model_architecture.png)
 
-## 2. 초기 모델링
-### 1. Dataset 구성
+## 1. 데이터 분석 및 실험
+
+### 1. EDA
+
+### 2. Dataset
 데이터 레이크인 s3로부터 이미지를 받고, 디렉토리 구조 정보로부터 라벨 정보를 파싱하여 첨부
 ```
 def _load_images(self):
@@ -28,7 +36,10 @@ def _load_images(self):
 
 실험 내용(train or test)에 따라 이미지를 다르게 전처리한다. 
 
-### 2. Model 구성
+
+## 2. Model 구성
+### 1. models
+
 초기 모델 구성을 위해 이미지 처리에 많이 쓰이는 efficientnet 모델을 먼저 구성한다. 비교를 위해 b0, b1, b3 세개를 옵션으로 제공한다. 
 ```
  match self.version:
@@ -46,24 +57,10 @@ def _load_images(self):
 
 ```
 
-### 3. 모델 학습 및 평가
+### 2. 모델 학습 및 평가
 에포크를 돌면서 모델을 학습하고 테스트하며 성능을 확인한다. 모델 성능을 확인하여 최종적으로 모델을 구성한다. 
-### 4. 예측
+
+### 3. mlflow 설정
 구성된 모델을 바탕으로 예측을 해본다. 
 
-## 3. MLFlow
-초기 모델 구성을 바탕으로 mlflow가 머신러닝 모델의 cicd를 관리할 수 있도록 모델 내에 메트릭을 수집하고 모델을 등록하는 코드를 이식한다. 
-
-### 1. 설치하기
-```
-pip install mlflow
-```
-### 2. web ui 띄우기
-```
-mlflow ui --host 0.0.0.0 --port 5000
-```
-### 3. 파일 설정
-모델 학습을 하는 과정에서 메트릭, 파라미터, 모델 아티팩트를 수집하고 모델 학습이 완료된 경우에 모델을 등록하므로 관련 코드를 작성한다. 
-
-### 4. 모델 등록 후 추론 서버 띄우기
 

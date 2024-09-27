@@ -1,31 +1,34 @@
-import os
-import torch
+import fire
 import mlflow
-from dotenv import load_dotenv
+mlflow.set_tracking_uri('http://127.0.0.1:5000')
 
-from src.models.Efficientnets import Efficientnets
-# from src.models.Resnet import Resnets
-# from src.models.TinyVGG import TinyVGG
-# from src.models.CNN import CNN
+from src.Train import TrainModel
+from src.StageAlias import stage_alias_first_second, produce_alias
+from src.Production import production_model_info
 
-#변수 로드
-load_dotenv(dotenv_path= '/home/ubuntu/coc-model/.env',
-            verbose= True,)
-AWS_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
-tracking_uri = os.getenv('MLFLOW_TRACKING_URI')
-mlflow.set_tracking_uri(tracking_uri)
+#모델 학습
+def train_model(dataset_version: str, model_type,
+                model_version=None, optimizer_type='adam', epochs=10, learning_rate=0.001, batch_size=16):
 
-#모델 선정
-model = Efficientnets(version=0)
-# model = Resnets(version=50)
-# model = TinyVGG(32)
-# model = CNN()
+    # 모델 학습 실행
+    model = TrainModel(
+        model_type=model_type,
+        model_version=model_version,
+        optimizer_type=optimizer_type,
+        dataset_version=dataset_version,
+        learning_rate=learning_rate,
+        epochs=epochs,
+        batch_size=batch_size
+    )
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = model.to(device)
+    model.run_training()
+    
+#운영 모델 uri 반환
 
-lr = 0.001
-
-from src.Train import run_training
-
-run_training(model, device, AWS_BUCKET_NAME, 'split_1', 10, learning_rate=0.001)
+if __name__ == "__main__":
+    fire.Fire({
+        'Train':train_model,
+        'Stage': stage_alias_first_second,
+        'Produce': produce_alias,
+        'ProductionInfo': production_model_info
+    })
