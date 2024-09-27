@@ -13,5 +13,4 @@ jobs:
       - name: Run MLflow server in background
         run: |
           echo "MLflow 서버를 0.0.0.0:5003에서 백그라운드로 실행하고 로그를 /home/ubuntu/youngwoo-flask-app/mlflow.log에 기록합니다."
-          nohup /home/ubuntu/.pyenv/versions/youngwoo-env/bin/mlflow server --host 0.0.0.0 --port 5003 > /home/ubuntu/youngwoo-flask-app/mlflow.log 2>&1 &
-          disown
+          setsid /home/ubuntu/.pyenv/versions/youngwoo-env/bin/mlflow server --host 0.0.0.0 --port 5003 > /home/ubuntu/youngwoo-flask-app/mlflow.log 2>&1 &
