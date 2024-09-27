@@ -9,12 +9,17 @@ jobs:
     env:
       DISABLE_RUNNER_CLEANUP: 'true' # Disable automatic cleanup
     steps:
-      # Python 환경 설정: pyenv 가상 환경 활성화
-      - name: Set up Python environment with pyenv
+      # pyenv 초기화 및 가상 환경 설정
+      - name: Initialize pyenv and activate virtual environment
         run: |
-          echo "pyenv 환경을 설정합니다."
+          echo "pyenv와 가상 환경을 초기화합니다."
+          export PYENV_ROOT="$HOME/.pyenv"
+          export PATH="$PYENV_ROOT/bin:$PATH"
+          eval "$(pyenv init --path)"
+          eval "$(pyenv init -)"
+          eval "$(pyenv virtualenv-init -)"
           pyenv activate youngwoo-env
-      
+
       # 가상 환경이 제대로 활성화되었는지 확인
       - name: Verify Python environment
         run: |
