@@ -140,7 +140,7 @@ class TrainModel():
                                          artifact_path=artifact_path
                                          )
                 model_uri = f"runs:/{run.info.run_id}/{artifact_path}"
-                mlflow.register_model(model_uri=model_uri, name='Test', tags={"model_name":model_name})
+                mlflow.register_model(model_uri=model_uri, name='Experiments', tags={"model_name":model_name})
                 print('최소값을 넘겨 모델 등록에 성공하였습니다.')
             else:
                 print("최소값을 넘지 못해 모델 등록에 실패하였습니다.")
