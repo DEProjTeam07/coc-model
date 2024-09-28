@@ -1,0 +1,94 @@
+name: Real_CI/CD 
+
+on:
+  # 실행되는 조건은 임시적으로 수동적으로 실행되게끔 했다. 즉각적으로 테스트하기 위함이다. 
+  workflow_dispatch:
+
+jobs:
+  job1:
+    runs-on: self-hosted
+    steps:
+       # mlflow 서버가 켜져 있으면 끄는 작업을 한다. (systemd 방식)
+       - name: Check and stop MLflow server
+         run: |
+            if sudo systemctl is-active --quiet real_mlflow; then
+              echo "MLflow 서버가 실행 중이었습니다."
+              echo "Automated Pipeline을 실행해야 되서 재정비를 해야 하므로 mlflow 서버를 종료하겠습니다."
+              sudo systemctl stop real_mlflow
+              echo "MLflow 서버를 중지했습니다."
+            else
+              echo "MLflow 서버가 실행 중이지 않습니다. 별다른 작업을 하지 않습니다."
+            fi
+      
+       # Flask 서버가 켜져 있으면 끄는 작업을 한다. (systemd 방식)
+       - name: Check and stop Flask server
+         run: |
+           if sudo systemctl is-active --quiet flask_app; then
+             echo "Flask 서버가 실행하고 있는 중이었습니다."
+             echo "Automated Pipeline을 실행해야 되서 재정비를 해야 하므로 Flask 서버를 종료하겠습니다."
+             sudo systemctl stop flask_app
+             echo "Flask 서버를 중지했습니다."
+           else
+             echo "Flask 서버가 실행 중이지 않습니다. 별다른 작업을 하지 않습니다."
+           fi
+
+
+       # Streamlit 서버가 켜져 있으면 끄는 작업을 한다. (systemd 방식)
+       - name: Check and stop Streamlit server
+         run: |
+           if sudo systemctl is-active --quiet streamlit_app; then
+             echo "Streamlit 서버가 실행하고 있는 중이었습니다."
+             echo "Automated Pipeline을 실행하기 되서 재정비를 해야 하므로 Streamlit 서버를 종료하겠습니다."
+             sudo systemctl stop streamlit_app
+             echo "Streamlit 서버를 중지했습니다."
+           else
+             echo "Streamlit 서버가 실행 중이지 않습니다. 별다른 작업을 하지 않습니다."
+           fi
+
+
+       # mlflow 서버를 켠다.
+       - name: Start MLflow server
+         run: |
+          echo "MLflow 서버를 시작합니다."
+          sudo systemctl start real_mlflow
+
+       # MLflow 서버 상태 확인
+       - name: Check MLflow server status
+         run: |
+          echo "MLflow 서버 상태를 확인합니다."
+          sudo systemctl status real_mlflow
+
+
+       # 모델 코드의 시작점인 main.py를 실행해서 Automated Piepline에 이어서 모델 관련 지표, 모델 등록과 관련된 작업을 할 수 있도록 한다. 
+       - name : Automated Pipeline activate 
+         run : | 
+           echo "Automated Pipeline를 실행합니다."
+
+
+       # Flask 서버를 켠다. 
+       - name: Start Flask server
+         run: | 
+           echo "Flask 서버를 시작합니다."
+           sudo systemctl start flask_app
+
+       # Flask 서버 상태 확인
+       - name: Check Flask server status
+         run: | 
+           echo "Flask의 서버 상태를 확인합니다."
+           sudo systemctl status flask_app
+
+
+       # Streamlit 서버를 켠다. 
+       - name: Start Streamlit server
+         run: | 
+           echo "Streamlit 서버를 시작합니다."
+           sudo systemctl start streamlit_app
+
+       # Flask 서버 상태 확인
+       - name: Check Streamlit server status
+         run: | 
+           echo "Streamit의 서버 상태를 확인합니다."
+           sudo systemctl status streamlit_app
+
+
+       
