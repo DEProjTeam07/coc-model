@@ -2,6 +2,8 @@
 Flask 서버 코드 
 predict 함수는 mlflow model registry에서 등록된 model를 load해서 추론값을 return 하는 기능을 가진다. 
 '''
+from src.Production import production_model_info
+
 import torch
 import torchvision.transforms as transforms
 import mlflow.pytorch
@@ -14,12 +16,11 @@ app = Flask(__name__)
 # mlflow model registy에 등록된 모델을 load하기 전에 set_tracking_uri를 명시해야 한다. 
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
-# 모델명과 model_version을 명시한다. 
-model_name = "Test"
-model_version = 1
+# 서비스에 사용될 모델을 가져온다. 
+model_uri = production_model_info()
 
 # mlflow에 있는 모델을 로드한다. 
-model = mlflow.pytorch.load_model(model_uri=f"models:/{model_name}/{model_version}")
+model = mlflow.pytorch.load_model(model_uri=model_uri)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # 모델을 훈련 모드가 아닌 평가 모드로 전환하여 테스트 및 실제 서비스 환경에서 사용할 수 있도록 한다. 
