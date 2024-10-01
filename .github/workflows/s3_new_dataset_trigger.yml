@@ -1,0 +1,18 @@
+name: Trigger Action Workflow
+
+on:
+  repository_dispatch:
+    types: [trigger_action]  # Airflow에서 보내는 `trigger_action` 이벤트를 감지
+
+jobs:
+  run_triggered_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Print message from Airflow
+        run: echo "${{ github.event.client_payload.message }}"
+
+      - name: Print folder path
+        run: echo "${{ github.event.client_payload.folder_path }}"
