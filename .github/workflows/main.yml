@@ -1,0 +1,12 @@
+name: Issue Closed Echo
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  issue-closed:
+    runs-on: self-hosted
+    steps:
+      - name: Echo Issue Closed Message
+        run: echo "An issue has been closed. Issue number: ${{ github.event.issue.number }}"
