@@ -9,7 +9,7 @@ permissions:
   
 jobs:
   issue-closed:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: 이슈 닫힘 메시지 출력
         run: |
