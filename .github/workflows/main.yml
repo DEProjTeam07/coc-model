@@ -3,7 +3,10 @@ name: 이슈 닫힘 알림
 on:
   issues:
     types: [closed]
-
+    
+permissions:
+  issues: read  # 이슈에 대한 읽기 권한 부여
+  
 jobs:
   issue-closed:
     runs-on: self-hosted
