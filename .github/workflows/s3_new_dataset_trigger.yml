@@ -1,15 +1,30 @@
-name: Trigger Action Workflow
+name: Matrix Model Training Workflow
 
 on:
   repository_dispatch:
-    types: [trigger_action]  # Airflow에서 보내는 `trigger_action` 이벤트를 감지
+    types: [trigger_action]
 
 jobs:
-  run_triggered_job:
+  run_model_training:
     runs-on: self-hosted
+    strategy:
+      matrix:
+        model_type: [efficientnet, resnet, tinyvgg, cnn]  # 4개
+        optimizer_type: [sgd, adam]  # 2개
+        learning_rate: [0.001, 0.01]  # 2개 (범위 축소)
+        epochs: [10, 20, 30]  # 3개 (범위 축소)
+        batch_size: [32, 64]  # 2개 (범위 축소)
     steps:
-      - name: Print message from Airflow
-        run: echo "${{ github.event.client_payload.message }}"
-
       - name: Print folder path
         run: echo "${{ github.event.client_payload.folder_path }}"
+
+      - name: 모델 훈련 실행
+        run: |
+          cd /home/ubuntu/coc-model
+          /home/ubuntu/.pyenv/versions/modelenv-2/bin/python main.py Train \
+            --dataset_version "${{ github.event.client_payload.folder_path }}" \
+            --model_type "${{ matrix.model_type }}" \
+            --optimizer_type "${{ matrix.optimizer_type }}" \
+            --epochs "${{ matrix.epochs }}" \
+            --learning_rate "${{ matrix.learning_rate }}" \
+            --batch_size "${{ matrix.batch_size }}"
