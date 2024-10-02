@@ -1,10 +1,10 @@
-# S3에 새로운 데이터셋이 추가되면 Github Action을 Trigger 한다. 
-
+# Github Repository에 code가 push되면 Github Action을 실행한다. 
 name: Matrix Model Training Workflow
 
 on:
-  repository_dispatch:
-    types: [trigger_action]
+  push:
+    branches:
+      - master  # Trigger on push to the master branch
 
 jobs:
   run_model_training:
@@ -24,7 +24,7 @@ jobs:
         run: |
           cd /home/ubuntu/coc-model
           /home/ubuntu/.pyenv/versions/modelenv-2/bin/python main.py Train \
-            --dataset_version "${{ github.event.client_payload.folder_path }}" \
+            --dataset_version "version_1" \
             --model_type "${{ matrix.model_type }}" \
             --optimizer_type "${{ matrix.optimizer_type }}" \
             --epochs "${{ matrix.epochs }}" \
