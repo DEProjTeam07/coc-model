@@ -14,7 +14,7 @@ class S3ImageDatasets(Dataset):
         self.usage = usage
         self.prefix = f"{self.dataset_version}/{self.usage}/"
         
-        load_dotenv(dotenv_path='/home/ubuntu/coc-model/.env', verbose=True)
+        load_dotenv(dotenv_path='.env', verbose=True)
         self.bucket_name = os.getenv('AWS_BUCKET_NAME')
 
         # 이미지 변환 형태 지정

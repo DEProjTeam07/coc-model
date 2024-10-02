@@ -9,6 +9,7 @@ from src.S3ImageDatasets import build_set_loaders
 from src.Utils.TrainingParams import validate_params
 from src.Utils.Optimizer import OptimizerType, get_optimizer
 from src.Utils.EarlyStopping import EarlyStopping
+from src.ModelWrapper import ModelWrapper
 
 class TrainModel():
     def __init__(self, model_type, model_version, epochs, 
@@ -136,9 +137,10 @@ class TrainModel():
             
             if early_stopping.model_log_triggered :
                 artifact_path = f'{model_name}'
-                mlflow.pytorch.log_model(self.model, 
-                                         artifact_path=artifact_path
-                                         )
+                mlflow.pytorch.log_model(
+                    self.model,
+                    artifact_path=artifact_path,
+                    )
                 model_uri = f"runs:/{run.info.run_id}/{artifact_path}"
                 mlflow.register_model(model_uri=model_uri, name='Experiments', tags={"model_name":model_name})
                 print('최소값을 넘겨 모델 등록에 성공하였습니다.')

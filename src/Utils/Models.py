@@ -29,3 +29,4 @@ def get_model(model_type, version=None):
     else:
         raise ValueError("학습할 수 있는 모델이 아닙니다\n사용할 수 있는 모델 : efficientnet, resnet, tinyvgg, cnn")
     return model
+

@@ -1,0 +1,75 @@
+version: '3'
+services:
+  mlflow-server:
+    image: python:3.11.9
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_TRACKING_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+      - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
+    volumes:
+      - ./mlruns:/mlruns
+    command: mlflow server --default-artifact-root s3://deprojteam07-datalake/model_registry
+
+  train-model:
+    image: test
+    container_name: train-model
+    depends_on:
+      - mlflow-server
+    environment:
+      - MLFLOW_TRACKING_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+      - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
+    volumes:
+      - ./src:/app/src
+      - ./.env:/app/.env
+      - ./main.py:/app/main.py
+    command: python /app/main.py --model_type cnn --dataset_version version_1
+
+  postgres-0:
+    image: bitnami/postgresql-repmgr:14
+    container_name: postgres-0
+    ports:
+      - "5433:5432"
+    env_file:
+      - path: ./.config/env/.master_env
+        required: true
+    networks:
+      - default
+
+  postgres-1:
+    image: bitnami/postgresql-repmgr:14
+    container_name: postgres-1
+    ports:
+      - "5434:5432"
+    env_file:
+      - path: ./.config/env/.worker_env
+        required: true
+    depends_on:
+      - postgres-0
+    networks:
+      - default
+
+  pgpool:
+    image: docker.io/bitnami/pgpool:4
+    container_name: pgpool
+    user: "1001"
+    ports:
+      - "5430:5432"
+    env_file:
+      - path: ./.config/env/.pgpool_env
+        required: true
+    depends_on:
+      - postgres-0
+      - postgres-1
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
