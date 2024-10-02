@@ -5,7 +5,6 @@ mlartifacts/
 staging_models/
 mlruns/
 inference_dataset/
-app/
 .github/
 
 .old/

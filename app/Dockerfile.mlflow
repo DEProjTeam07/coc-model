@@ -1,0 +1,17 @@
+FROM python:3.11.9
+
+WORKDIR /app
+
+# 필요한 패키지 설치
+RUN pip install --upgrade pip
+RUN pip install mlflow boto3 psycopg2-binary
+
+# mlruns 볼륨 마운트
+VOLUME /mlruns
+
+# 환경 변수 설정
+ENV MLFLOW_TRACKING_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+ENV MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
+
+# MLflow 서버 실행
+CMD ["mlflow", "server", "--backend-store-uri", "postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB", "--default-artifact-root", "s3://deprojteam07-datalake/model_registry", "--host", "0.0.0.0", "--port", "15000"]
