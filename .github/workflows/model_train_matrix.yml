@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 
 jobs:
+  run-model-train-matrix:
+    runs-on: [self-hosted, linux, X64]
+  
   train-model:
     runs-on: ubuntu-latest
     strategy:
