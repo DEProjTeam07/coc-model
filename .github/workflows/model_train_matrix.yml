@@ -1,0 +1,38 @@
+name: model training with docker compose
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        model_type: [cnn, resnet, efficientnet, tinyvgg]
+        dataset_version: [version_1]
+        epoch: [10, 20]
+        learning_rate: [0.01, 0.001]
+        optimizer_type: ['adam', 'sgd','rmsprop']
+        batch_size: [16,32]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: 환경 설정
+        run: |
+          echo "MODEL_TYPE=${{ matrix.model_type }}" >> .env
+          echo "DATASET_VERSION=${{ matrix.dataset_version }}" >> .env
+          echo "EPOCH=${{ matrix.epoch }}" >> .env
+          echo "LEARNING_RATE=${{ matrix.learning_rate }}" >> .env
+          echo "OPTIMIZER_TYPE=${{ matrix.optimizer_type }}" >> .env
+          echo "BATCH_SIZE=${{ matrix.batch_size }}" >> .env
+
+      - name: 도커 컴포즈 업
+        run: docker-compose up --build -d
+
+      - name: 결과 업로드
+        uses: actions/upload-artifact@v2
+        with:
+          name: model-results-${{ matrix.model_type }}-${{ matrix.dataset_version }}
+          path: results/
