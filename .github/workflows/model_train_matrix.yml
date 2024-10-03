@@ -29,7 +29,9 @@ jobs:
           echo "BATCH_SIZE=${{ matrix.batch_size }}" >> .env
 
       - name: 도커 컴포즈 업
-        run: docker-compose up --build -d
+        run: |
+          cd /home/ubuntu/flatfix/app
+          docker-compose up --build -d
 
       - name: 결과 업로드
         uses: actions/upload-artifact@v2
