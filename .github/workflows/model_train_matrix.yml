@@ -32,9 +32,3 @@ jobs:
         run: |
           cd /home/ubuntu/flatfix/app
           docker-compose up --build -d
-
-      - name: 결과 업로드
-        uses: actions/upload-artifact@v2
-        with:
-          name: model-results-${{ matrix.model_type }}-${{ matrix.dataset_version }}
-          path: results/
