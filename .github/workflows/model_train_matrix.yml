@@ -31,4 +31,4 @@ jobs:
       - name: 도커 컴포즈 업
         run: |
           cd /home/ubuntu/flatfix/app
-          docker-compose up --build -d
+          docker compose up --build -d
