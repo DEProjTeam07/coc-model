@@ -6,10 +6,47 @@ mlflow에 로드된 모델을 가지고 추론한 결과값을 Streamlit이 받�
 '''
 
 import streamlit as st
-from PIL import Image
 import requests
+import psycopg2
+import os
 
-# 페이지 설정
+from dotenv import load_dotenv
+from PIL import Image
+
+# .env 파일에서 환경 변수를 로드
+load_dotenv()
+
+# PostgreSQL 연결하는 함수 
+def get_db_connection():
+    conn = psycopg2.connect(
+        host=os.getenv("POSTGRES_HOST"),
+        database=os.getenv("POSTGRES_DB"),
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        port=os.getenv("POSTGRES_PORT")
+    )
+    return conn
+
+# DB에 좋아요/싫어요 데이터 저장 함수
+def save_survey(is_good):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # 쿼리 실행 - created_at은 자동으로 CURRENT_TIMESTAMP로 저장됨
+    cursor.execute(
+        """
+        INSERT INTO service_survey (is_good)
+        VALUES (%s);
+        """,
+        (is_good,)
+    )
+    
+    # DB 커밋 및 연결 종료
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+# Streamlit 웹 서비스 화면 설정
 st.set_page_config(page_title="타이어 상태 분류 서비스", page_icon="🚗", layout="wide")
 
 # CSS로 페이지 상단 마진을 줄여서 헤더를 위로 올리고 좌우 구역을 아래로 내리기
@@ -131,9 +168,18 @@ with col2:
     """)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 페이지 맨 아래에 푸터 배치
-st.markdown("""
-    <footer>
-        <small>© FLAT_FIX 타이어 상태 분류 서비스</small>
-    </footer>
-""", unsafe_allow_html=True)
+    # 우측 하단: 만족도 조사 추가
+    st.markdown("---")
+    st.markdown("### 서비스 만족도 조사")
+    st.write("서비스에 대한 만족도를 선택해 주세요:")
+
+    # 만족도 조사 버튼
+    col_like, col_dislike = st.columns([1, 1])
+    with col_like:
+        if st.button("👍 좋아요"):
+            save_survey(True)  # 좋아요 데이터 저장
+            st.success("감사합니다! 좋은 서비스를 제공할 수 있도록 노력하겠습니다.")
+    with col_dislike:
+        if st.button("👎 싫어요"):
+            save_survey(False)  # 싫어요 데이터 저장
+            st.warning("불편을 드려 죄송합니다. 더 나은 서비스를 위해 노력하겠습니다.")
