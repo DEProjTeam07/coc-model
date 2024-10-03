@@ -4,12 +4,9 @@ on:
   push:
   workflow_dispatch:
 
-jobs:
-  run-model-train-matrix:
-    runs-on: [self-hosted, linux, X64]
-  
+jobs: 
   train-model:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, X64]
     strategy:
       matrix:
         model_type: [cnn, resnet, efficientnet, tinyvgg]
