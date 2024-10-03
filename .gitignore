@@ -7,12 +7,14 @@ mlruns/
 inference_dataset/
 .github/
 
+.tree
 .old/
 .env
 .Utils
 Inference.py
 model_load.py
 inferance_data_transform.py
+ModelWrapper.py
 
 ### macOS ###
 # General
