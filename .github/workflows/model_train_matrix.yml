@@ -18,6 +18,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      
+      - name: 디버그 로그 보기
+        run: |
+          echo "GITHUB_ACTIONS_DEBUG=true" >> $GITHUB_ENV
 
       - name: git pull
         run: |
@@ -40,7 +44,6 @@ jobs:
 
       - name: 의존성 설치
         run: |
-         pip install -r /home/ubuntu/flatfix/requirements.txt
          pip install pytest
          
       - name: pytest 실행
