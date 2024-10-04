@@ -1,4 +1,4 @@
-name: model training with docker compose
+name: new model push to training
 
 on:
   push:
@@ -12,13 +12,18 @@ jobs:
         model_type: [cnn, resnet, efficientnet, tinyvgg]
         dataset_version: [version_1]
         epoch: [10, 20]
-        learning_rate: [0.01, 0.001]
-        optimizer_type: ['adam', 'sgd','rmsprop']
-        batch_size: [16,32]
+        learning_rate: [0.01]
+        optimizer_type: ['adam', 'sgd']
+        batch_size: [16]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: git pull
+        run: |
+          cd /home/ubuntu/flatfix
+          git pull
+          
       - name: 환경 설정
         run: |
           echo "MODEL_TYPE=${{ matrix.model_type }}" >> .env
@@ -28,7 +33,23 @@ jobs:
           echo "OPTIMIZER_TYPE=${{ matrix.optimizer_type }}" >> .env
           echo "BATCH_SIZE=${{ matrix.batch_size }}" >> .env
 
+      - name: python 설치
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11.9
+
+      - name: 의존성 설치
+        run: |
+         pip install -r /home/ubuntu/flatfix/requirements.txt
+         pip install pytest
+         
+      - name: pytest 실행
+        run: |
+          cd /home/ubuntu/
+          pytest pytest/
+
       - name: 도커 컴포즈 업
         run: |
-          cd /home/ubuntu/flatfix/app
+          cd /home/ubuntu/flatfix
           docker compose up --build -d
+          
