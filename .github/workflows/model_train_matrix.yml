@@ -53,8 +53,8 @@ jobs:
           python main.py Train --mlflow_uri http://13.124.132.135:15000 \
                                --backend_uri postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB \
                                --default-artifact-root s3://deprojteam07-datalake/model_registry
-                               --model_type ${{ matrix.model-type }} \
                                --dataset_version version_1 \
+                               --model_type ${{ matrix.model-type }} \
                                --epochs ${{ matrix.epochs }} \
                                --optimizer_type ${{ matrix.optimizer_type }}
 
