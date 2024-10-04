@@ -12,9 +12,7 @@ jobs:
     strategy:
       matrix:
         model_type: ['cnn', 'resnet', 'efficientnet', 'tinyvgg']
-        epoch: [10]
         dataset_version: ['version_1']
-        optimizer_type: ['adam']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -55,9 +53,9 @@ jobs:
 
       - name: 학습
         run: |
-          docker run --memory='4g' train-model \
+          docker run --memory='2g' --memory-swap="4g" train-model \
             python /app/main.py Train \
             --model_type ${{ matrix.model_type }} \
-            --dataset_version ${{ matrix.dataset_version }} \
-            --epochs ${{ matrix.epoch }} \
-            --optimizer_type ${{ matrix.optimizer_type }}
+            --dataset_version version_1 \
+            --epochs 10 \
+            --optimizer_type adam
