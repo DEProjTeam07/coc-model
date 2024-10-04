@@ -49,7 +49,7 @@ jobs:
 
       - name: 학습 resnet
         run: |
-          docker run train-model \
+          docker run --memory='4g' train-model \
             python /app/main.py Train \
             --model_type resnet \
             --dataset_version version_1 \
@@ -58,7 +58,7 @@ jobs:
 
       - name: 학습 cnn
         run: |
-          docker run train-model \
+          docker run --memory='4g' train-model \
             python /app/main.py Train \
             --model_type cnn \
             --dataset_version version_1 \
@@ -67,7 +67,7 @@ jobs:
 
       - name: 학습 efficientnet
         run: |
-          docker run train-model \
+          docker run --memory='4g' train-model \
             python /app/main.py Train \
             --model_type efficientnet \
             --dataset_version version_1 \
@@ -76,7 +76,7 @@ jobs:
 
       - name: 학습 tinyvgg
         run: |
-          docker run train-model \
+          docker run --memory='4g' train-model \
             python /app/main.py Train \
             --model_type tinyvgg \
             --dataset_version version_1 \
