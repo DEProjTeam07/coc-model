@@ -56,6 +56,7 @@ jobs:
       - name: 학습
         run: |
           docker run train-model \
+            python /app/main.py Train \
             --model_type ${{ matrix.model_type }} \
             --dataset_version ${{ matrix.dataset_version }} \
             --epoch ${{ matrix.epoch }} \
