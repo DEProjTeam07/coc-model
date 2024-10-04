@@ -48,15 +48,14 @@ jobs:
           cd /home/ubuntu/flatfix
           docker compose up --build -d
         
-      - name: 학습 실행
-        run: |
-          export PATH="$HOME/.pyenv/bin:$PATH"
-          eval "$(pyenv init --path)"
-          eval "$(pyenv init -)"
-          eval "$(pyenv virtualenv-init -)"
-          pyenv activate modelenv-2
-          python main.py Train --dataset_version ${{ matrix.dataset_version }} \
-                               --model_type ${{ matrix.model_type }} \
-                               --epochs ${{ matrix.epoch }} \
-                               --optimizer_type ${{ matrix.optimizer_type }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg MODEL_TYPE=${{ matrix.model_type }} \
+            --build-arg DATASET_VERSION=${{ matrix.dataset_version }} \
+            --build-arg EPOCH=${{ matrix.epoch }} \
+            --build-arg OPTIMIZER_TYPE=${{ matrix.optimizer_type }} \
+            -t myrepo/train-model:${{ matrix.model_type }}-${{ matrix.optimizer_type }}-${{ matrix.epoch }} .
