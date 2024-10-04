@@ -57,5 +57,5 @@ jobs:
             python /app/main.py Train \
             --model_type ${{ matrix.model_type }} \
             --dataset_version version_1 \
-            --epochs 10 \
+            --epochs 5 \
             --optimizer_type adam
