@@ -62,6 +62,7 @@ jobs:
           EPOCH=${{ matrix.epoch }}
           LEARNING_RATE=${{ matrix.learning_rate }}
           OPTIMIZER_TYPE=${{ matrix.optimizer_type }}
-          BATCH_SIZE=${{ matrix.batch_size }}    
+          BATCH_SIZE=${{ matrix.batch_size }}
+          cd /home/ubuntu/flatfix/
           docker compose up --build -d
 
