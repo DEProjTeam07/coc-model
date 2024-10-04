@@ -12,11 +12,8 @@ jobs:
     strategy:
       matrix:
         model_type: [cnn, resnet, efficientnet, tinyvgg]
-        dataset_version: [version_1]
         epoch: [10, 20]
-        learning_rate: [0.01]
         optimizer_type: ['adam', 'sgd']
-        batch_size: [16]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -30,15 +27,6 @@ jobs:
           cd /home/ubuntu/flatfix
           git pull
           
-      - name: 환경 설정
-        run: |
-          echo "MODEL_TYPE=${{ matrix.model_type }}" >> .env
-          echo "DATASET_VERSION=${{ matrix.dataset_version }}" >> .env
-          echo "EPOCH=${{ matrix.epoch }}" >> .env
-          echo "LEARNING_RATE=${{ matrix.learning_rate }}" >> .env
-          echo "OPTIMIZER_TYPE=${{ matrix.optimizer_type }}" >> .env
-          echo "BATCH_SIZE=${{ matrix.batch_size }}" >> .env
-
       - name: python 설치
         uses: actions/setup-python@v2
         with:
@@ -55,14 +43,12 @@ jobs:
           pytest /home/ubuntu/flatfix/test/
 
         
-      - name: 도커 이미지 올리기
+      - name: 학습 실행
         run: |
-          MODEL_TYPE=${{ matrix.model_type }}
-          DATASET_VERSION=${{ matrix.dataset_version }}
-          EPOCH=${{ matrix.epoch }}
-          LEARNING_RATE=${{ matrix.learning_rate }}
-          OPTIMIZER_TYPE=${{ matrix.optimizer_type }}
-          BATCH_SIZE=${{ matrix.batch_size }}
-          cd /home/ubuntu/flatfix/
-          docker compose up --build -d
+          python main.py Train --mlflow_uri http://13.124.132.135:15000 \
+                               --backend_uri postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB \
+                               --default-artifact-root s3://deprojteam07-datalake/model_registry
+                               --model_type ${{ matrix.model-type }} \
+                               --epochs ${{ matrix.epochs }} \
+                               --optimizer_type ${{ matrix.optimizer_type }}
 
