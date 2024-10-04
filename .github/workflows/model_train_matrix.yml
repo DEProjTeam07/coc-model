@@ -50,7 +50,7 @@ jobs:
          
       - name: pytest 실행
         run: |
-          pytest test/
+          pytest /home/ubuntu/flatfix/test/
 
       - name: 도커 컴포즈 업
         run: |
