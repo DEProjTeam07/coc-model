@@ -53,9 +53,7 @@ jobs:
           pyenv activate modelenv-2
           pip install pytest
           pytest /home/ubuntu/flatfix/test/
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
       
       - name: 도커 컴포즈 업
         run: |
