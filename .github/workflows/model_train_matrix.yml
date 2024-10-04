@@ -47,17 +47,16 @@ jobs:
         run: |
           cd /home/ubuntu/flatfix
           docker compose up --build -d
-        
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
 
-      - name: Build Docker image
+      - name: 학습 도커 이미지 빌드
         run: |
           cd /home/ubuntu/flatfix
-          docker build \
-            -f Dockerfile.experiments \
-            --build-arg MODEL_TYPE=${{ matrix.model_type }} \
-            --build-arg DATASET_VERSION=${{ matrix.dataset_version }} \
-            --build-arg EPOCH=${{ matrix.epoch }} \
-            --build-arg OPTIMIZER_TYPE=${{ matrix.optimizer_type }} \
-            -t myrepo/train-model:${{ matrix.model_type }}-${{ matrix.optimizer_type }}-${{ matrix.epoch }} .
+          docker build -f Docker.experiments -t train-model .
+
+      - name: 학습
+        run: |
+          docker run train-model \
+            --model_type ${{ matrix.model_type }} \
+            --dataset_version ${{ matrix.dataset_version }} \
+            --epoch ${{ matrix.epoch }} \
+            --optimizer_type ${{ matrix.optimizer_type }}
