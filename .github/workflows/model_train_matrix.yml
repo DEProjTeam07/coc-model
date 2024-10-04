@@ -11,7 +11,7 @@ jobs:
     runs-on: [self-hosted, linux, X64]
     strategy:
       matrix:
-        model_type: [cnn, resnet, efficientnet, tinyvgg]
+        model_type: ['cnn', 'resnet', 'efficientnet', 'tinyvgg']
         epoch: [10, 20]
         dataset_version: ['version_1']
         optimizer_type: ['adam', 'sgd']
@@ -56,6 +56,6 @@ jobs:
                                --default-artifact-root s3://deprojteam07-datalake/model_registry
                                --dataset_version ${{ matrix.dataset_version }} \
                                --model_type ${{ matrix.model_type }} \
-                               --epochs ${{ matrix.epochs }} \
+                               --epochs ${{ matrix.epoch }} \
                                --optimizer_type ${{ matrix.optimizer_type }}
 
