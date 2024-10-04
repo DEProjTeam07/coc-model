@@ -43,6 +43,10 @@ jobs:
           pip install pytest
           pytest /home/ubuntu/flatfix/test/
 
+      - name: 도커 컴포즈 업
+        run: |
+          cd /home/ubuntu/flatfix
+          docker compose up --build -d
         
       - name: 학습 실행
         run: |
