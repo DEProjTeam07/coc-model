@@ -55,7 +55,7 @@ jobs:
         run: |
           cd /home/ubuntu/flatfix
           docker build \
-            -f Dockerfile.experiment \
+            -f Dockerfile.experiments \
             --build-arg MODEL_TYPE=${{ matrix.model_type }} \
             --build-arg DATASET_VERSION=${{ matrix.dataset_version }} \
             --build-arg EPOCH=${{ matrix.epoch }} \
