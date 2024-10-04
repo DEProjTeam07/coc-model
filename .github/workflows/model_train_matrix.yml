@@ -9,10 +9,6 @@ on:
 jobs: 
   train-model:
     runs-on: [self-hosted, linux, X64]
-    strategy:
-      matrix:
-        model_type: ['cnn', 'resnet', 'efficientnet', 'tinyvgg']
-        dataset_version: ['version_1']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -51,11 +47,39 @@ jobs:
           cd /home/ubuntu/flatfix
           docker build -f Dockerfile.experiments -t train-model .
 
-      - name: 학습
+      - name: 학습 resnet
         run: |
           docker run --memory='2g' --memory-swap="4g" train-model \
             python /app/main.py Train \
-            --model_type ${{ matrix.model_type }} \
+            --model_type resnet \
             --dataset_version version_1 \
             --epochs 5 \
             --optimizer_type adam
+
+      - name: 학습 cnn
+        run: |
+          docker run --memory='2g' --memory-swap="4g" train-model \
+            python /app/main.py Train \
+            --model_type cnn \
+            --dataset_version version_1 \
+            --epochs 5 \
+            --optimizer_type adam
+
+      - name: 학습 efficientnet
+        run: |
+          docker run --memory='2g' --memory-swap="4g" train-model \
+            python /app/main.py Train \
+            --model_type efficientnet \
+            --dataset_version version_1 \
+            --epochs 5 \
+            --optimizer_type adam
+
+      - name: 학습 tinyvgg
+        run: |
+          docker run --memory='2g' --memory-swap="4g" train-model \
+            python /app/main.py Train \
+            --model_type tinyvgg \
+            --dataset_version version_1 \
+            --epochs 5 \
+            --optimizer_type adam
+
