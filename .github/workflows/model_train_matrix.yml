@@ -45,6 +45,11 @@ jobs:
         
       - name: 학습 실행
         run: |
+          export PATH="$HOME/.pyenv/bin:$PATH"
+          eval "$(pyenv init --path)"
+          eval "$(pyenv init -)"
+          eval "$(pyenv virtualenv-init -)"
+          pyenv activate modelenv-2
           python main.py Train --mlflow_uri http://13.124.132.135:15000 \
                                --backend_uri postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB \
                                --default-artifact-root s3://deprojteam07-datalake/model_registry
