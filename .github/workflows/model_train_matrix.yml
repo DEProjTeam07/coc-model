@@ -58,7 +58,7 @@ jobs:
 
       - name: 학습 cnn
         run: |
-          docker run --memory='4g' train-model \
+          docker run  train-model \
             python /app/main.py Train \
             --model_type cnn \
             --dataset_version version_1 \
