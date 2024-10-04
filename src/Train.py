@@ -9,7 +9,6 @@ from src.S3ImageDatasets import build_set_loaders
 from src.Utils.TrainingParams import validate_params
 from src.Utils.Optimizer import OptimizerType, get_optimizer
 from src.Utils.EarlyStopping import EarlyStopping
-from src.ModelWrapper import ModelWrapper
 
 class TrainModel():
     def __init__(self, model_type, model_version, epochs, 
@@ -107,6 +106,7 @@ class TrainModel():
 
         with mlflow.start_run(nested=True) as run:
             mlflow.log_param("model_name", model_name)
+            mlflow.log_param("dataset_version", self.dataset_version)
             mlflow.log_param("epochs", self.epochs)
             mlflow.log_param("learning_rate", self.learning_rate)
             mlflow.log_param("batch_size", self.batch_size)

@@ -6,7 +6,7 @@ staging_models/
 mlruns/
 inference_dataset/
 .github/
-
+app/
 .tree
 .old/
 .env
@@ -15,6 +15,7 @@ Inference.py
 model_load.py
 inferance_data_transform.py
 ModelWrapper.py
+actions-runner/
 
 ### macOS ###
 # General

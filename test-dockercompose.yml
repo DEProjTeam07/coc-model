@@ -1,0 +1,92 @@
+services:
+  postgres-0:
+    image: bitnami/postgresql-repmgr:14
+    container_name: postgres-0
+    ports:
+      - "5433:5432"
+    env_file:
+      - path: ./.config/env/.master_env
+    volumes:
+      - postgres0_data:/bitnami/postgresql
+    networks:
+      - default
+
+  postgres-1:
+    image: bitnami/postgresql-repmgr:14
+    container_name: postgres-1
+    ports:
+      - "5435:5432"
+    env_file:
+      - path: ./.config/env/.worker_env
+    depends_on:
+      - postgres-0
+    volumes:
+      - postgres1_data:/bitnami/postgresql
+    networks:
+      - default
+
+  pgpool:
+    image: docker.io/bitnami/pgpool:4
+    container_name: pgpool
+    user: "1001"
+    ports:
+      - "5430:5432"  
+    env_file:
+      - path: ./.config/env/.pgpool_env
+    depends_on:
+      - postgres-0
+      - postgres-1
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  mlflow-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mlflow
+    container_name: mlflow-server
+    ports:
+      - "15000:15000"
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+      - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
+      - MLFLOW_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
+
+    command: mlflow server --port 15000 --host 0.0.0.0
+  
+  train-model:
+    build:
+      context: .
+      dockerfile: Dockerfile.experiments
+    image: test-model
+    container_name: train-model
+    environment:
+      - MODEL_TYPE=${MODEL_TYPE}
+      - DATASET_VERSION=${DATASET_VERSION}
+      - EPOCHS=${EPOCHS}
+      - LEARNING_RATE=${LEARNING_RATE}
+      - OPTIMIZER=${OPTIMIZER}
+      - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+      - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
+      - MLFLOW_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry  
+    depends_on:
+      - mlflow-server
+    volumes:
+      - ./src:/app/src
+      - ./.env:/app/.env
+      - ./main.py:/app/main.py
+    command: |
+      python /app/main.py Train --model_type $MODEL_TYPE --dataset_version $DATASET_VERSION --epochs $EPOCHS --learning_rate $LEARNING_RATE --optimizer_type $OPTIMIZER
+
+
+volumes:
+  postgres0_data:
+  postgres1_data:
+
+networks:
+  default:
+    driver: bridge

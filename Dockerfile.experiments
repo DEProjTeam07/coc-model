@@ -12,9 +12,15 @@ COPY /src /app/src
 COPY .env /app/.env
 COPY main.py /app/main.py
 
-EXPOSE 5000
-
-ENV MLFLOW_TRACKING_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+ENV MLFLOW_TRACKING_URI=http://172.31.15.63:15000
+ENV MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
 ENV MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
+ENV MLFLOW_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
 
-CMD ["python", "/app/main.py"]
+ENV MODEL_TYPE=$MODEL_TYPE
+ENV DATASET_VERSION=$DATASET_VERSION
+ENV EPOCHS=$EPOCHS
+ENV LEARNING_RATE=$LEARNING_RATE
+ENV OPTIMIZER=$OPTIMIZER
+
+CMD ["python", "/app/main.py", "Train", "--model_type", "$MODEL_TYPE", "--dataset_version", "$DATASET_VERSION", "--epochs", "$EPOCHS", "--learning_rate", "$LEARNING_RATE", "--optimizer_type", "$OPTIMIZER"]
