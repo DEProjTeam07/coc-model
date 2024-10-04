@@ -51,7 +51,7 @@ jobs:
       - name: 학습 도커 이미지 빌드
         run: |
           cd /home/ubuntu/flatfix
-          docker build -f Docker.experiments -t train-model .
+          docker build -f Dockerfile.experiments -t train-model .
 
       - name: 학습
         run: |
