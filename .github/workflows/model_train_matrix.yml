@@ -54,8 +54,6 @@ jobs:
           pip install pytest
           pytest /home/ubuntu/flatfix/test/
 
-      - name: set up docker buildx
-        uses: docker/setup-buildx-action@v1
         
       - name: 도커 이미지 올리기
         run: |
@@ -67,6 +65,3 @@ jobs:
           BATCH_SIZE=${{ matrix.batch_size }}    
           docker compose up --build -d
 
-      - name: docker tag
-        run: |
-          docker tag train-model myrepo/train-model:${{ matrix.model-type }}-${{ matrix.dataset-version }}
