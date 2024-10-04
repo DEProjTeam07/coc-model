@@ -13,6 +13,7 @@ jobs:
       matrix:
         model_type: [cnn, resnet, efficientnet, tinyvgg]
         epoch: [10, 20]
+        dataset_version: ['version_1']
         optimizer_type: ['adam', 'sgd']
     steps:
       - name: Checkout code
@@ -53,8 +54,8 @@ jobs:
           python main.py Train --mlflow_uri http://13.124.132.135:15000 \
                                --backend_uri postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB \
                                --default-artifact-root s3://deprojteam07-datalake/model_registry
-                               --dataset_version version_1 \
-                               --model_type ${{ matrix.model-type }} \
+                               --dataset_version ${{ matrix.dataset_version }} \
+                               --model_type ${{ matrix.model_type }} \
                                --epochs ${{ matrix.epochs }} \
                                --optimizer_type ${{ matrix.optimizer_type }}
 
