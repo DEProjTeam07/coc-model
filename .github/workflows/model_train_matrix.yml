@@ -12,9 +12,9 @@ jobs:
     strategy:
       matrix:
         model_type: ['cnn', 'resnet', 'efficientnet', 'tinyvgg']
-        epoch: [10, 20]
+        epoch: [10]
         dataset_version: ['version_1']
-        optimizer_type: ['adam', 'sgd']
+        optimizer_type: ['adam']
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
