@@ -53,10 +53,20 @@ jobs:
           pyenv activate modelenv-2
           pip install pytest
           pytest /home/ubuntu/flatfix/test/
+
+      - name: set up docker buildx
+        uses: docker/setup-buildx-action@v1
         
-      
-      - name: 도커 컴포즈 업
+      - name: 도커 이미지 올리기
         run: |
-          cd /home/ubuntu/flatfix
+          MODEL_TYPE=${{ matrix.model_type }}
+          DATASET_VERSION=${{ matrix.dataset_version }}
+          EPOCH=${{ matrix.epoch }}
+          LEARNING_RATE=${{ matrix.learning_rate }}
+          OPTIMIZER_TYPE=${{ matrix.optimizer_type }}
+          BATCH_SIZE=${{ matrix.batch_size }}    
           docker compose up --build -d
-          
+
+      - name: docker tag
+        run: |
+          docker tag train-model myrepo/train-model:${{ matrix.model-type }}-${{ matrix.dataset-version }}
