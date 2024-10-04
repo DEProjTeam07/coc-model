@@ -46,12 +46,14 @@ jobs:
 
       - name: 의존성 설치
         run: |
-         pip install pytest
-         
-      - name: pytest 실행
-        run: |
+          export PATH="$HOME/.pyenv/bin:$PATH"
+          eval "$(pyenv init --path)"
+          eval "$(pyenv init -)"
+          eval "$(pyenv virtualenv-init -)"
+          pyenv activate modelenv-2
+          pip install pytest
           pytest /home/ubuntu/flatfix/test/
-
+         
       - name: 도커 컴포즈 업
         run: |
           cd /home/ubuntu/flatfix
