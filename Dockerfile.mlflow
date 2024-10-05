@@ -13,7 +13,7 @@ VOLUME /mlruns
 ENV MLFLOW_TRACKING_URI=http://172.31.15.63:15000
 ENV MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
 ENV MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
-ENV MLFLOW_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
+ENV MLFLOW_DEFAULT_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
 
 # MLflow 서버 실행
 CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "15000"]

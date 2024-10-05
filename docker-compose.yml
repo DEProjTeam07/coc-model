@@ -72,7 +72,7 @@ services:
     environment:
       - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
       - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
-      - MLFLOW_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
     deploy:
       resources:
         limits:

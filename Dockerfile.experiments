@@ -10,11 +10,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY /src /app/src
 COPY .env /app/.env
+COPY test_senario.py /app/test_senario.py
 COPY main.py /app/main.py
 
 ENV MLFLOW_TRACKING_URI=http://172.31.15.63:15000
 ENV MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
 ENV MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
-ENV MLFLOW_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
+ENV MLFLOW_DEFAULT_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
 
 CMD ["python", "/app/main.py"]
