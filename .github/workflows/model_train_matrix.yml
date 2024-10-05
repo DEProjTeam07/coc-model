@@ -49,12 +49,14 @@ jobs:
 
       - name: 학습 resnet
         run: |
-          docker run --memory='4g' train-model \
+          docker run --memory='4g' --rm train-model \
             python /app/main.py Train \
             --model_type resnet \
             --dataset_version version_1 \
             --epochs 5 \
             --optimizer_type adam
+          
+          docker stop train-model
 
       - name: 학습 cnn
         run: |
