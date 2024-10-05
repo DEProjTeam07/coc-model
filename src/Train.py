@@ -106,6 +106,7 @@ class TrainModel():
 
         with mlflow.start_run(nested=True) as run:
             mlflow.log_param("model_name", model_name)
+            mlflow.log_param("dataset_version", self.dataset_version)
             mlflow.log_param("epochs", self.epochs)
             mlflow.log_param("learning_rate", self.learning_rate)
             mlflow.log_param("batch_size", self.batch_size)
@@ -136,9 +137,10 @@ class TrainModel():
             
             if early_stopping.model_log_triggered :
                 artifact_path = f'{model_name}'
-                mlflow.pytorch.log_model(self.model, 
-                                         artifact_path=artifact_path
-                                         )
+                mlflow.pytorch.log_model(
+                    self.model,
+                    artifact_path=artifact_path,
+                    )
                 model_uri = f"runs:/{run.info.run_id}/{artifact_path}"
                 mlflow.register_model(model_uri=model_uri, name='Experiments', tags={"model_name":model_name})
                 print('최소값을 넘겨 모델 등록에 성공하였습니다.')

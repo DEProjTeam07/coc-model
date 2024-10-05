@@ -1,22 +1,20 @@
 import os
-import boto3
 from PIL import Image
-from dotenv import load_dotenv
-from torch.utils.data import Dataset
+from unittest.mock import patch, MagicMock
+from torch.utils.data import Dataset, DataLoader
 from io import BytesIO
 from torchvision import transforms
-from torch.utils.data import DataLoader
+import numpy as np
 
-
-class S3ImageDatasets(Dataset):
+class MockS3ImageDatasets(Dataset):
     def __init__(self, dataset_version, usage):
         self.dataset_version = dataset_version
         self.usage = usage
         self.prefix = f"{self.dataset_version}/{self.usage}/"
         
-        load_dotenv(dotenv_path='.env', verbose=True)
-        self.bucket_name = os.getenv('AWS_BUCKET_NAME')
-
+        # 환경 변수에서 S3 버킷 이름 불러오기 대신 하드코딩 (테스트용)
+        self.bucket_name = "mock-bucket"
+        
         # 이미지 변환 형태 지정
         self.transform = self._get_transform(usage)
         
@@ -24,7 +22,8 @@ class S3ImageDatasets(Dataset):
         self.class_names = ['defective', 'good']
         self.class_to_idx = {class_name: idx for idx, class_name in enumerate(self.class_names)}
 
-        self.s3_client = boto3.client('s3')
+        # S3 클라이언트 대신 목(mock) 객체 사용
+        self.s3_client = MagicMock()
         self.imgs = self._load_images()
 
     def _get_transform(self, usage):
@@ -49,28 +48,21 @@ class S3ImageDatasets(Dataset):
         
         return transform_list[usage]
 
-    # 이미지 리스트 로드
+    # S3 대신 로컬에 있는 더미 이미지 리스트 로드
     def _load_images(self):
         imgs = []
         for class_name in self.class_names:
-            class_prefix = f"{self.prefix}{class_name}/"
-            try:
-                response = self.s3_client.list_objects(Bucket=self.bucket_name, Prefix=class_prefix)
-                if 'Contents' not in response:
-                    print(f"해당 디렉토리 {response}에 이미지가 없습니다. 버킷이 비어있는지, prefix가 정확한지 확인하십시오.")
-                    continue
-                
-                for obj in response['Contents']:
-                    imgs.append((obj['Key'], self.class_to_idx[class_name]))
-            except Exception as e:
-                print(f"S3로부터 이미지를 로드하는 중 오류 발생: {e}")
+            # 로컬 데이터 대신 더미 이미지 리스트 생성
+            for i in range(10):  # 각 클래스당 10개의 더미 이미지
+                key = f"{self.prefix}{class_name}/dummy_image_{i}.jpg"
+                imgs.append((key, self.class_to_idx[class_name]))
         return imgs
     
-    # 로드된 이미지 리스트 중 이미지 하나씩 로드
+    # 더미 이미지를 로드 (S3 없이)
     def _load_image(self, key):
-        obj = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
-        img_data = obj['Body'].read()
-        img = Image.open(BytesIO(img_data))
+        # 랜덤한 이미지 데이터를 생성해 반환
+        img_data = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+        img = Image.fromarray(img_data)
         return img
 
     def __len__(self):
@@ -85,12 +77,33 @@ class S3ImageDatasets(Dataset):
         return image, class_idx
 
 
-# 하나의 데이터 버전에 있는 데이터를 train과 test 셋으로 랜덤 스플릿
-def build_set_loaders(dataset_version):
-    train_dataset = S3ImageDatasets(dataset_version=dataset_version, usage='train')
-    test_dataset = S3ImageDatasets(dataset_version=dataset_version, usage='test')
+# 목 데이터셋을 사용하는 DataLoader 생성
+def build_set_loaders_mock(dataset_version):
+    train_dataset = MockS3ImageDatasets(dataset_version=dataset_version, usage='train')
+    test_dataset = MockS3ImageDatasets(dataset_version=dataset_version, usage='test')
 
     train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
 
     return train_dataset, test_dataset, train_loader, test_loader
+
+
+# Pytest에서 사용될 테스트 케이스
+def test_mock_s3_datasets():
+    # Mock 데이터셋 로더 빌드
+    train_dataset, test_dataset, train_loader, test_loader = build_set_loaders_mock(dataset_version="v1")
+
+    # 데이터셋 길이 확인
+    assert len(train_dataset) == 20  # 각 클래스마다 10개의 이미지
+    assert len(test_dataset) == 20
+    
+    # 배치 크기 확인
+    for images, labels in train_loader:
+        assert images.shape == (16, 3, 256, 256)  # 배치 크기, 채널, 이미지 크기
+        assert labels.shape == (16,)
+        break  # 한 번만 확인
+
+    for images, labels in test_loader:
+        assert images.shape == (16, 3, 256, 256)
+        assert labels.shape == (16,)
+        break

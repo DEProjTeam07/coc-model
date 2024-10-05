@@ -1,0 +1,81 @@
+name: new data push to training
+
+on:
+  repository_dispatch:
+    types: [trigger_action]  # Airflow에서 보내는 `trigger_action` 이벤트를 감지
+  workflow_dispatch:
+
+jobs:
+  run_triggered_job:
+    runs-on: [self-hosted, linux, X64]
+    steps:
+    - name: Print message from Airflow
+      run: echo "${{ github.event.client_payload.message }}"
+
+    - name: Print folder path
+      run: echo "${{ github.event.client_payload.folder_path }}"
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: 디버그 로그 보기
+      run: |
+        echo "GITHUB_ACTIONS_DEBUG=true" >> $GITHUB_ENV
+
+    - name: git pull
+      run: |
+        cd /home/ubuntu/flatfix
+        git pull
+        
+    - name: python 설치
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11.9
+
+    - name: 의존성 설치
+      run: |
+        export PATH="$HOME/.pyenv/bin:$PATH"
+        eval "$(pyenv init --path)"
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+        pyenv activate modelenv-2
+        pip install pytest
+        pytest /home/ubuntu/flatfix/test/
+
+    - name: 도커 컴포즈 업
+      run: |
+        cd /home/ubuntu/flatfix
+        docker compose up --build -d
+
+    - name: 학습 도커 이미지 빌드
+      run: |
+        cd /home/ubuntu/flatfix
+        docker build -f Dockerfile.experiments -t train-model .
+    
+    - name: 학습 resnet
+      run: |
+        docker run --memory='4g' --rm train-model \
+            python /app/main.py Train \
+            --model_type resnet \
+            --dataset_version ${{ github.event.client_payload.folder_path }} \
+            --epochs 5 \
+            --optimizer_type adam
+        
+    - name: 학습 efficientnet
+      run: |
+        docker run --rm train-model \
+            python /app/main.py Train \
+            --model_type efficientnet \
+            --dataset_version ${{ github.event.client_payload.folder_path }} \
+            --epochs 5 \
+            --optimizer_type adam
+
+    - name: 학습 tinyvgg
+      run: |
+        docker run --rm train-model \
+            python /app/main.py Train \
+            --model_type tinyvgg \
+            --dataset_version ${{ github.event.client_payload.folder_path }} \
+            --epochs 5 \
+            --optimizer_type adam
+
