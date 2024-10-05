@@ -56,8 +56,6 @@ jobs:
             --epochs 5 \
             --optimizer_type adam
           
-          docker stop train-model
-
       - name: 학습 cnn
         run: |
           docker run  train-model \
