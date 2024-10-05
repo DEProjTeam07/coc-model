@@ -68,7 +68,7 @@ jobs:
 
       - name: 학습 tinyvgg
         run: |
-          docker runz --rm train-model \
+          docker run --rm train-model \
             python /app/main.py Train \
             --model_type tinyvgg \
             --dataset_version version_1 \
