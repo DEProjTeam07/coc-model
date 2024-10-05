@@ -1,4 +1,4 @@
-name: new model push to training
+name: new source push to training
 
 on:
   push:
