@@ -10,6 +10,12 @@ services:
       - postgres0_data:/bitnami/postgresql
     networks:
       - default
+    deploy:
+      resources:
+        limits:
+          memory: 4g # 최대 메모리 제한
+        reservations:
+          memory: 2g
 
   postgres-1:
     image: bitnami/postgresql-repmgr:14
@@ -24,23 +30,35 @@ services:
       - postgres1_data:/bitnami/postgresql
     networks:
       - default
+    deploy:
+      resources:
+        limits:
+          memory: 4g # 최대 메모리 제한
+        reservations:
+          memory: 2g
 
   pgpool:
     image: docker.io/bitnami/pgpool:4
     container_name: pgpool
     user: "1001"
     ports:
-      - "5430:5432"  
+      - "5430:5432"
     env_file:
       - path: ./.config/env/.pgpool_env
     depends_on:
       - postgres-0
       - postgres-1
     healthcheck:
-      test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
+      test: [ "CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 5g # 최대 메모리 제한
+        reservations:
+          memory: 2g
     networks:
       - default
 
@@ -55,12 +73,18 @@ services:
       - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
       - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
       - MLFLOW_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
-
+    deploy:
+      resources:
+        limits:
+          memory: 10g # 최대 메모리 제한
+        reservations:
+          memory: 2g
     command: mlflow server --port 15000 --host 0.0.0.0
-  
+
 volumes:
   postgres0_data:
   postgres1_data:
+
 
 networks:
   default:
