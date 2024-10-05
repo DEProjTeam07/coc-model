@@ -15,13 +15,13 @@ app = Flask(__name__)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # mlflow model registry에 등록된 모델을 로드하기 전에 set_tracking_uri를 명시해야 한다.
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri("http://127.0.0.1:15000")
 
 # 전역 변수로 모델 및 run_id를 저장
 model = None
 current_run_id = None
 
-# 모델 로드를 위한 함수 정의
+# mlflow Model Registry에 있는 Production Name을 가진 모델을 가져오는 함수 
 def load_model():
     global model, current_run_id
     new_run_id = get_run_model_info()  # mlflow에서 새로운 run_id를 가져옴
