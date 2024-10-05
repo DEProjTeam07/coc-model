@@ -16,11 +16,13 @@ class ModelType(Enum):
 def get_model(model_type, version=None):
     if model_type == ModelType.EFFICIENTNET:
         if version is None:
-            raise ValueError("efficientnet에 지정되지 않은 버전입니다.\n지정된 버전 : 0, 1, 2")
+            print("efficientnet에 지정되지 않은 버전입니다.\n지정된 버전 : 0, 1, 2\nefficientnet_b0으로 학습을 진행합니다.")
+            version=0
         model = Efficientnets(version)
     elif model_type == ModelType.RESNET:
         if version is None:
-            raise ValueError("resnet에 지정되지 않은 버전입니다.\n지정된 버전 : 18, 50")
+            print("resnet에 지정되지 않은 버전입니다.\n지정된 버전 : 18, 50\nresnet 18로 학습을 진행합니다.")
+            version = 18
         model = Resnets(version)
     elif model_type == ModelType.TINYVGG:
         model = TinyVGG()
