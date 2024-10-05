@@ -47,6 +47,15 @@ jobs:
           cd /home/ubuntu/flatfix
           docker build -f Dockerfile.experiments -t train-model .
 
+      - name: 학습 cnn
+        run: |
+          docker run --rm train-model \
+            python /app/main.py Train \
+            --model_type cnn \
+            --dataset_version version_1 \
+            --epochs 5 \
+            --optimizer_type adam
+
       - name: 학습 resnet
         run: |
           docker run --memory='4g' --rm train-model \
@@ -56,14 +65,6 @@ jobs:
             --epochs 5 \
             --optimizer_type adam
           
-      - name: 학습 cnn
-        run: |
-          docker run --rm train-model \
-            python /app/main.py Train \
-            --model_type cnn \
-            --dataset_version version_1 \
-            --epochs 5 \
-            --optimizer_type adam
 
       - name: 학습 efficientnet
         run: |
