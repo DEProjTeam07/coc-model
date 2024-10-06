@@ -40,8 +40,9 @@ jobs:
       - name: 도커 컴포즈 업
         run: |
           cd /home/ubuntu/flatfix
-          docker compose up --build -d
+          docker network create --driver bridge mlflow-network
           docker network ls
+          docker compose up --build -d
           docker inspect mlflow-server | grep "Networks"
 
       - name: 학습 resnet
