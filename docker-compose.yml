@@ -71,15 +71,23 @@ services:
       - "15000:15000"
     environment:
       - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
-      - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
-      - MLFLOW_DEFAULT_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
+      - MLFLOW_ARTIFACT_DESTINATION=s3://deprojteam07-datalake/model_registry/
     deploy:
       resources:
         limits:
           memory: 10g # 최대 메모리 제한
         reservations:
           memory: 2g
-    command: mlflow server --port 15000 --host 0.0.0.0
+    command: mlflow server --port 15000 --host 0.0.0.0 --default-artifact-root s3://deprojteam07-datalake/model_registry/ --backend-store-uri postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+
+  train-model:
+    build:
+      context: .
+      dockerfile: Dockerfile.experiments
+    container_name: train-model
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+      - MLFLOW_ARTIFACT_DESTINATION=s3://deprojteam07-datalake/model_registry/
 
 volumes:
   postgres0_data:
