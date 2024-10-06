@@ -4,10 +4,42 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
+  
 
 jobs: 
+  get-model-name:
+    runs-on: ubuntu-latest
+    outputs:
+      model_name: ${{ steps.extract.outputs.model_name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: 디버그 로그 보기
+        run: |
+          echo "GITHUB_ACTIONS_DEBUG=true" >> $GITHUB_ENV
+
+      - name: 커밋 메시지로부터 모델명 받기
+        id: extract
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MESSAGE"
+
+          if [[ "$COMMIT_MESSAGE" =~ model:\ (.+) ]]; then
+            MODEL_NAME="${BASH_REMATCH[1]}"
+            echo "찾은 모델명 : $MODEL_NAME"
+            echo "::set-output name=model_name::$MODEL_NAME"
+          else
+            echo "커밋 메시지에서 모델명을 찾을 수 없습니다."
+            exit 1
+          fi
+          
   train-model:
+    needs: get-model-name
     runs-on: [self-hosted, linux, X64]
     steps:
       - name: Checkout code
@@ -22,58 +54,25 @@ jobs:
           cd /home/ubuntu/flatfix
           git pull
           
-      - name: python 설치
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.11.9
-
-      - name: 의존성 설치
+      - name: 코드 테스트
         run: |
           export PATH="$HOME/.pyenv/bin:$PATH"
           eval "$(pyenv init --path)"
           eval "$(pyenv init -)"
           eval "$(pyenv virtualenv-init -)"
           pyenv activate modelenv-2
-          pip install pytest
           pytest /home/ubuntu/flatfix/test/
 
-      - name: 도커 컴포즈 업
+      - name: 모델 평가를 위한 컨테이너 환경 구축 
         run: |
-          cd /home/ubuntu/flatfix
-          docker network create --driver bridge mlflow-network
-          docker network ls
           docker compose up --build -d
-          docker inspect mlflow-server | grep "Networks"
 
-      - name: 학습 resnet
+      - name: 새로운 모델 학습
         run: |
-          docker run --network flatfix_mlflow-network --memory='4g' --rm train-model \
+          docker run --network flatfix_mlflow-network --rm -it flatfix-train-model \
             python /app/main.py Train \
-            --model_type resnet \
+            --model_type ${{ needs.get-model-name.outputs.model_name }} \
             --dataset_version version_1 \
             --epochs 5 \
             --optimizer_type adam
-          docker inspect train-model | grep "Networks"
-
-      - name: 학습 efficientnet
-        run: |
-          docker run --network flatfix_mlflow-network --rm train-model \
-            python /app/main.py Train \
-            --model_type efficientnet \
-            --dataset_version version_1 \
-            --epochs 5 \
-            --optimizer_type adam
-          docker inspect train-model | grep "Networks"
-
-
-      - name: 학습 tinyvgg
-        run: |
-          docker run --network flatfix_mlflow-network --rm train-model \
-            python /app/main.py Train \
-            --model_type tinyvgg \
-            --dataset_version version_1 \
-            --epochs 5 \
-            --optimizer_type adam
-          docker inspect train-model | grep "Networks"
-
 
