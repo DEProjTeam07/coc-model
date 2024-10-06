@@ -1,9 +1,10 @@
 # 사용자 정의 모듈 
-from src.Production import get_run_model_info, production_model_info
+from communicate_mlflow import get_production_run_id, get_production_model_uri
 
 # 외부 모듈 
 import torch
 import torchvision.transforms as transforms
+import mlflow 
 import mlflow.pytorch
 from PIL import Image
 from flask import Flask, request, jsonify, render_template
@@ -14,23 +15,36 @@ app = Flask(__name__)
 # device 설정 (CUDA 사용 가능 여부 확인)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# mlflow model registry에 등록된 모델을 로드하기 전에 set_tracking_uri를 명시해야 한다.
-mlflow.set_tracking_uri("http://127.0.0.1:15000")
+# mlflow model registry에 등록된 모델을 로드하기 전에 set_tracking_uri를 명시한다. 
+mlflow.set_tracking_uri("http://172.31.15.63:15000")
 
 # 전역 변수로 모델 및 run_id를 저장
 model = None
 current_run_id = None
 
-# mlflow Model Registry에 있는 Production Name을 가진 모델을 가져오는 함수 
+# mlflow Model Registry에 있는 Production Name을 가진 가장 최신에 업로드된 모델을 가져오는 함수 
 def load_model():
     global model, current_run_id
-    new_run_id = get_run_model_info()  # mlflow에서 새로운 run_id를 가져옴
     
-    # 전역 변수에 있는 current_run_id와 지금 mlflow Model Registry에 있는 Production Name을 가진 모델의 run_id와 같은지 확인한다. 
+    # mlflow에서 새로운 run_id를 가져옴
+    new_run_id = get_production_run_id()  
+    
+    # new_run_id가 None인 경우 
+    if new_run_id is None:
+        print("Error: 모델이 존재하지 않아서 run_id를 추출하지 못했습니다.")
+        return jsonify({"error": "모델을 사용할 수 없습니다."}), 500
+    
+    # 전역 변수에 있는 run_id와 지금 mlflow Model Registry에 있는 Production Name을 가진 모델의 run_id와 같은지 확인한다. 
     # 만약 다르면 model를 다시 로드하고 전역 변수에 업데이트 한다. 
     if current_run_id != new_run_id:
         print(f"run_id가 변경되었습니다. 새 모델을 로드합니다. (새 run_id: {new_run_id})")
-        model_uri = production_model_info()  # 새로운 모델 URI 가져오기
+        model_uri = get_production_model_uri()  # 새로운 모델 URI 가져오기
+        
+        # model_uri가 None인 경우 
+        if model_uri is None:
+            print("Error: 모델이 존재하지 않아서 run_id를 추출하지 못했습니다.")
+            return jsonify({"error": "모델을 사용할 수 없습니다."}), 500
+        
         model = mlflow.pytorch.load_model(model_uri=model_uri)  # 새로운 모델 로드
         model.eval()  # 모델을 평가 모드로 설정
         current_run_id = new_run_id  # 전역 변수에 새로운 run_id 저장
@@ -39,7 +53,7 @@ def load_model():
 
 # 처음 서버 시작 시 모델을 로드
 load_model()
-
+    
 # 이미지 전처리 설정
 transform = transforms.Compose([
     transforms.Resize((256, 256)),
@@ -58,17 +72,14 @@ def predict():
     # 사용자가 이미지를 업로드했을 때 이미지의 내용을 체크한다. 
     # 만약 문제가 생기면 문제가 있으면 return 한다. 
     if 'file' not in request.files:
-        return jsonify({"error": "No file part in the request"}), 400
+        return jsonify({"error": "파일이 없습니다."}), 400
     
     file = request.files['file']
-    
-    if file.filename == '':
-        return jsonify({"error": "No file selected for uploading"}), 400
 
     # 혹시 mlflow Model Registry에 Production Name을 가진 모델이 달라졌는지 확인한다. 
     # 만약 모델이 달라졌으면 전역 변수에 있는 model과 run id를 변경한다. 
     load_model()
-
+    
     # 이미지를 로드 및 RGB로 변환하고 추론을 시작한다.
     try:
         image = Image.open(file.stream).convert("RGB")  # 이미지 로드 및 RGB로 변환
@@ -85,7 +96,7 @@ def predict():
         return jsonify({"predicted_class": result}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "이미지를 로드하고 추론하는 과정에서 문제가 발생했습니다."}), 500
 
 
 if __name__ == "__main__":

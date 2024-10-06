@@ -10,11 +10,7 @@ import requests
 import psycopg2
 import os
 
-from dotenv import load_dotenv
 from PIL import Image
-
-# .env 파일에서 환경 변수를 로드
-load_dotenv()
 
 # PostgreSQL 연결하는 함수 
 def get_db_connection():
@@ -133,16 +129,16 @@ with col1:
                 try:
                     # Flask 서버로 이미지 전송
                     response = requests.post(
-                        "http://172.31.15.63:5002/predict",
+                        "http://172.31.0.17:5002/predict",
                         files={"file": uploaded_file.getvalue()}
                     )
-
+                    
                     # 예측 결과 표시
                     if response.status_code == 200:
                         prediction = response.json().get("predicted_class")
                         st.success(f"예측 결과: **{prediction}**")
                     else:
-                        st.error(f"에러: {response.json().get('error')}")
+                        st.error(f"에러 내용: {response.json().get('error')}")
                 except Exception as e:
                     st.error(f"서버와 통신 중 에러 발생: {e}")
         else:

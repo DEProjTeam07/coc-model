@@ -1,4 +1,4 @@
-# crontab으로 좋아요, 싫어요 자동 기록하게 하기 
+# crontab으로 DB 테이블에 좋아요, 싫어요 자동 기록하게 하기 
 import psycopg2
 from psycopg2 import sql
 import random
