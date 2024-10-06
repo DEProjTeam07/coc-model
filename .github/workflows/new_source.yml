@@ -23,13 +23,13 @@ jobs:
         run: |
           echo "GITHUB_ACTIONS_DEBUG=true" >> $GITHUB_ENV
 
-      - name: 커밋 메시지로부터 모델명 받기
+      - name: 커밋 메시지로부터 모델명 받기 ('model:' 모델명 형식의 메시지를 파싱)
         id: extract
         run: |
           COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           echo "Commit message: $COMMIT_MESSAGE"
 
-          if [[ "$COMMIT_MESSAGE" =~ model:\ (.+) ]]; then
+          if [[ "$COMMIT_MESSAGE" =~ model :\ (.+) ]]; then
             MODEL_NAME="${BASH_REMATCH[1]}"
             echo "찾은 모델명 : $MODEL_NAME"
             echo "::set-output name=model_name::$MODEL_NAME"
