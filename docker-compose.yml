@@ -9,11 +9,11 @@ services:
     volumes:
       - postgres0_data:/bitnami/postgresql
     networks:
-      - default
+      - mlflow-network # 네트워크를 default에서 mlflow-network로 변경
     deploy:
       resources:
         limits:
-          memory: 4g # 최대 메모리 제한
+          memory: 4g
         reservations:
           memory: 2g
 
@@ -29,11 +29,11 @@ services:
     volumes:
       - postgres1_data:/bitnami/postgresql
     networks:
-      - default
+      - mlflow-network # 네트워크 변경
     deploy:
       resources:
         limits:
-          memory: 4g # 최대 메모리 제한
+          memory: 4g
         reservations:
           memory: 2g
 
@@ -56,11 +56,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 5g # 최대 메모리 제한
+          memory: 5g
         reservations:
           memory: 2g
     networks:
-      - default
+      - mlflow-network # 네트워크 변경
 
   mlflow-server:
     build:
@@ -75,9 +75,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 10g # 최대 메모리 제한
+          memory: 10g
         reservations:
           memory: 2g
+    networks:
+      - mlflow-network # 네트워크 변경
     command: mlflow server --port 15000 --host 0.0.0.0 --default-artifact-root s3://deprojteam07-datalake/model_registry/ --backend-store-uri postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
 
   train-model:
@@ -86,8 +88,12 @@ services:
       dockerfile: Dockerfile.experiments
     container_name: train-model
     environment:
+      - MLFLOW_TRACKING_URI=http://172.31.15.63:15000
       - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
       - MLFLOW_ARTIFACT_DESTINATION=s3://deprojteam07-datalake/model_registry/
+      - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
+    networks:
+      - mlflow-network # 네트워크 변경
 
 volumes:
   postgres0_data:
@@ -95,5 +101,5 @@ volumes:
 
 
 networks:
-  default:
+  mlflow-network:
     driver: bridge
