@@ -41,32 +41,38 @@ jobs:
         run: |
           cd /home/ubuntu/flatfix
           docker compose up --build -d
+          docker network ls
+          docker inspect mlflow-server | grep "Networks"
 
       - name: 학습 resnet
         run: |
-          docker run --network default --memory='4g' --rm train-model \
+          docker run --network flatfix_mlflow-network --memory='4g' --rm train-model \
             python /app/main.py Train \
             --model_type resnet \
             --dataset_version version_1 \
             --epochs 5 \
             --optimizer_type adam
-          
+          docker inspect train-model | grep "Networks"
 
       - name: 학습 efficientnet
         run: |
-          docker run --network default --rm train-model \
+          docker run --network flatfix_mlflow-network --rm train-model \
             python /app/main.py Train \
             --model_type efficientnet \
             --dataset_version version_1 \
             --epochs 5 \
             --optimizer_type adam
+          docker inspect train-model | grep "Networks"
+
 
       - name: 학습 tinyvgg
         run: |
-          docker run --network default --rm train-model \
+          docker run --network flatfix_mlflow-network --rm train-model \
             python /app/main.py Train \
             --model_type tinyvgg \
             --dataset_version version_1 \
             --epochs 5 \
             --optimizer_type adam
+          docker inspect train-model | grep "Networks"
+
 
