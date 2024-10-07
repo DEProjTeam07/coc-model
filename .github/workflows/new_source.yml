@@ -67,6 +67,7 @@ jobs:
 
       - name: 모델 평가를 위한 컨테이너 환경 구축
         run: |
+          cd /home/ubuntu/flatfix
           docker compose up --build -d
 
       - name: 새로운 모델 학습
