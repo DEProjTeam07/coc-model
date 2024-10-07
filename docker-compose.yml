@@ -9,11 +9,11 @@ services:
     volumes:
       - postgres0_data:/bitnami/postgresql
     networks:
-      - default
+      - mlflow-network
     deploy:
       resources:
         limits:
-          memory: 4g # 최대 메모리 제한
+          memory: 4g
         reservations:
           memory: 2g
 
@@ -29,11 +29,11 @@ services:
     volumes:
       - postgres1_data:/bitnami/postgresql
     networks:
-      - default
+      - mlflow-network
     deploy:
       resources:
         limits:
-          memory: 4g # 최대 메모리 제한
+          memory: 4g
         reservations:
           memory: 2g
 
@@ -50,17 +50,17 @@ services:
       - postgres-1
     healthcheck:
       test: [ "CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh" ]
-      interval: 10s
-      timeout: 5s
+      interval: 20s
+      timeout: 10s
       retries: 5
     deploy:
       resources:
         limits:
-          memory: 5g # 최대 메모리 제한
+          memory: 5g
         reservations:
           memory: 2g
     networks:
-      - default
+      - mlflow-network
 
   mlflow-server:
     build:
@@ -71,15 +71,27 @@ services:
       - "15000:15000"
     environment:
       - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
-      - MLFLOW_S3_ENDPOINT_URL=https://s3.amazonaws.com
-      - MLFLOW_ARTIFACT_ROOT=s3://deprojteam07-datalake/model_registry
-    deploy:
-      resources:
-        limits:
-          memory: 10g # 최대 메모리 제한
-        reservations:
-          memory: 2g
-    command: mlflow server --port 15000 --host 0.0.0.0
+      - MLFLOW_S3_ENDPOINT_URL=https://s3.ap-northeast-2.amazonaws.com
+      - MLFLOW_TRACKING_URI=http://172.31.15.63:15000
+      - MLFLOW_ARTIFACT_DESTINATION=s3://deprojteam07-datalake/model_registry/
+    networks:
+      - mlflow-network # 네트워크 변경
+    command: mlflow server --port 15000 --host 0.0.0.0 --default-artifact-root s3://deprojteam07-datalake/model_registry/
+
+  train-model:
+    build:
+      context: .
+      dockerfile: Dockerfile.experiments
+    container_name: train-model
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://master_user:proj777!@pgpool:5432/MLFLOW_DB
+      - MLFLOW_ARTIFACT_DESTINATION=s3://deprojteam07-datalake/model_registry/
+      - MLFLOW_S3_ENDPOINT_URL=https://s3.ap-northeast-2.amazonaws.com
+      - MLFLOW_TRACKING_URI=http://172.31.15.63:15000
+    networks:
+      - mlflow-network
+    depends_on:
+      - mlflow-server
 
 volumes:
   postgres0_data:
@@ -87,5 +99,5 @@ volumes:
 
 
 networks:
-  default:
+  mlflow-network:
     driver: bridge

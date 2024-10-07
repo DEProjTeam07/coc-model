@@ -26,14 +26,14 @@ def train_model(dataset_version: str, model_type,
 #운영 모델 uri 반환
 
 if __name__ == "__main__":
-    train_model(dataset_version='version_1', model_type='efficientnet', model_version='0',optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
-    train_model(dataset_version='version_1', model_type='efficientnet', model_version='0',optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
-    train_model(dataset_version='version_1', model_type='efficientnet', model_version='1',optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
-    train_model(dataset_version='version_1', model_type='efficientnet', model_version='1',optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
-    train_model(dataset_version='version_1', model_type='efficientnet', model_version='2',optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
-    train_model(dataset_version='version_1', model_type='efficientnet', model_version='2',optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
-    train_model(dataset_version='version_1', model_type='resnet', model_version='18',optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
-    train_model(dataset_version='version_1', model_type='resnet', model_version='18',optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
+    train_model(dataset_version='version_1', model_type='efficientnet', model_version=0,optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
+    train_model(dataset_version='version_1', model_type='efficientnet', model_version=0,optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
+    train_model(dataset_version='version_1', model_type='efficientnet', model_version=1,optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
+    train_model(dataset_version='version_1', model_type='efficientnet', model_version=1,optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
+    train_model(dataset_version='version_1', model_type='efficientnet', model_version=2,optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
+    train_model(dataset_version='version_1', model_type='efficientnet', model_version=2,optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
+    train_model(dataset_version='version_1', model_type='resnet', model_version=18,optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
+    train_model(dataset_version='version_1', model_type='resnet', model_version=18,optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
     train_model(dataset_version='version_1', model_type='resnet', model_version='50',optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
     train_model(dataset_version='version_1', model_type='resnet', model_version='50',optimizer_type='sgd',epochs=10, learning_rate=0.01, batch_size=16)
     train_model(dataset_version='version_1', model_type='cnn', optimizer_type='adam',epochs=10, learning_rate=0.01, batch_size=16)
