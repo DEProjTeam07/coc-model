@@ -12,6 +12,7 @@ on:
 
 jobs: 
   get-model-name:
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
       model_name: ${{ steps.extract.outputs.model_name }}
