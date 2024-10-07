@@ -7,11 +7,11 @@ def get_production_run_id():
     client = mlflow.tracking.MlflowClient()
     
     # "Production" Name에 모델들을 가져온다. 
-    versions = client.search_model_versions("name='Experiments'")
+    versions = client.search_model_versions("name='Production'")
     
     # 만약 모델들이 없는 경우 처리
     if not versions:
-        print("Error: Model Registry에 'Experiments' 이름을 가진 모델이 없습니다.")
+        print("Error: Model Registry에 'Production' 이름을 가진 모델이 없습니다.")
         return None  
     
     # 'Registered at' (creation_timestamp) 기준으로 내림차순 정렬하여 최신 버전 선택 -> 사실 필요는 없음 혹시나 모를까봐 
@@ -20,7 +20,7 @@ def get_production_run_id():
     print(f"get_production_run_id 함수 -  Experiments Name에서 가져온 모델 리스트 : {sorted_versions}")
 
     # 가장 최근에 등록된 모델 버전의 run_id 반환
-    run_id = sorted_versions[1].run_id
+    run_id = sorted_versions[0].run_id
     
     print(f"get_production_run_id 함수 - 모델의 run_id : {run_id}")
     
@@ -32,11 +32,11 @@ def get_production_model_uri():
     client = mlflow.tracking.MlflowClient()
     
     # "Production" Name에 모델들을 가져온다
-    versions = client.search_model_versions("name='Experiments'")
+    versions = client.search_model_versions("name='Production'")
     
     # 만약 모델들이 없는 경우 처리
     if not versions:
-        print("Error: Model Registry에 'Experiments' 이름을 가진 모델이 없습니다.")
+        print("Error: Model Registry에 'Production' 이름을 가진 모델이 없습니다.")
         return None  
     
     # 'Registered at' (creation_timestamp) 기준으로 내림차순 정렬하여 최신 버전 선택 -> 사실 필요는 없음 혹시나 모를까봐 
@@ -45,7 +45,7 @@ def get_production_model_uri():
     print(f"get_production_model_uri 함수 - Experiments Name에서 가져온 모델 리스트 : {sorted_versions}")
     
     # 최신 버전의 모델 정보 가져오기
-    latest_version = sorted_versions[1]
+    latest_version = sorted_versions[0]
     
     print(f"get_production_model_uri 함수 - 가져온 모델 정보 : {latest_version}")
     
