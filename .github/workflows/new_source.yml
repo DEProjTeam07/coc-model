@@ -3,10 +3,10 @@ name: new source push to training
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
   workflow_dispatch:
   
 
@@ -73,7 +73,7 @@ jobs:
         run: |
           docker run --network flatfix_mlflow-network --rm -it flatfix-train-model \
             python /app/main.py Train \
-            --model_type ${{ github.event_name != 'workflow_dispatch' && needs.get-model-name.outputs.model_name || 'default-model' }} \
+            --model_type ${{ github.event_name != 'workflow_dispatch' && needs.get-model-name.outputs.model_name || 'efficientnet' }} \
             --dataset_version version_1 \
             --epochs 5 \
             --optimizer_type adam
