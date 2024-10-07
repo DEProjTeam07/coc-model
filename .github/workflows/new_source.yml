@@ -1,0 +1,80 @@
+name: new source push to training
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+  
+
+jobs: 
+  get-model-name:
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      model_name: ${{ steps.extract.outputs.model_name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: 디버그 로그 보기
+        run: |
+          echo "GITHUB_ACTIONS_DEBUG=true" >> $GITHUB_ENV
+
+      - name: 커밋 메시지로부터 모델명 받기 ('model:' 모델명 형식의 메시지를 파싱)
+        id: extract
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MESSAGE"
+
+          if [[ "$COMMIT_MESSAGE" =~ model:\ (.+) ]]; then
+            MODEL_NAME="${BASH_REMATCH[1]}"
+            echo "찾은 모델명 : $MODEL_NAME"
+            echo "::set-output name=model_name::$MODEL_NAME"
+          else
+            echo "커밋 메시지에서 모델명을 찾을 수 없습니다."
+            exit 1
+          fi
+          
+  train-model:
+    runs-on: [self-hosted, linux, X64]
+    needs: get-model-name 
+    if: ${{ github.event_name != 'workflow_dispatch' || always() }} 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: 디버그 로그 보기
+        run: |
+          echo "GITHUB_ACTIONS_DEBUG=true" >> $GITHUB_ENV
+
+      - name: git pull
+        run: |
+          cd /home/ubuntu/flatfix
+          git pull
+          
+      - name: 코드 테스트
+        run: |
+          export PATH="$HOME/.pyenv/bin:$PATH"
+          eval "$(pyenv init --path)"
+          eval "$(pyenv init -)"
+          eval "$(pyenv virtualenv-init -)"
+          pyenv activate modelenv-2
+          pytest /home/ubuntu/flatfix/test/
+
+      - name: 모델 평가를 위한 컨테이너 환경 구축
+        run: |
+          cd /home/ubuntu/flatfix
+          docker compose up --build -d
+
+      - name: 새로운 모델 학습
+        run: |
+          docker run --network flatfix_mlflow-network --rm flatfix-train-model \
+            python /app/main.py Train \
+            --model_type ${{ github.event_name != 'workflow_dispatch' && needs.get-model-name.outputs.model_name || 'efficientnet' }} \
+            --dataset_version version_1 \
+            --epochs 5 \
+            --optimizer_type adam
