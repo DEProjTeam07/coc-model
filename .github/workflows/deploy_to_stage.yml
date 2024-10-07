@@ -1,0 +1,44 @@
+name: deploy model to stage on dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      eval_metric:  
+        description: "어떤 지표를 기준으로 스테이지 하시겠습니까?"
+        required: true
+        default: "Loss"
+        type: choice
+        options:
+          - "Loss"
+          - "Accuracy"
+          - "F1"
+          - "Recall"
+          - "Precision"
+
+jobs:
+  run_triggered_job:
+    runs-on: [self-hosted, linux, X64]
+    outputs:
+      deploy_stage: ${{ github.event.inputs.deploy_stage }}  
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: 디버그 로그 보기
+      run: |
+        echo "GITHUB_ACTIONS_DEBUG=true" >> $GITHUB_ENV
+
+    - name: git pull
+      run: |
+        cd /home/ubuntu/flatfix
+        git pull
+        
+    - name: 필요 컨테이너 띄우기
+      run: |
+        cd /home/ubuntu/flatfix
+        docker compose up --build -d
+        
+    - name: 학습 시나리오 수행
+      run: docker run --network flatfix_mlflow-network --rm flatfix-train-model \
+        python main.py Stage ${{ github.event.inputs.eval_metric }}
+              
