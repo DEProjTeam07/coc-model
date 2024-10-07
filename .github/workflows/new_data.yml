@@ -47,6 +47,6 @@ jobs:
         cd /home/ubuntu/flatfix
         docker compose up --build -d
         
-    - name: 테스트 시나리오 수행
-      run: docker run --network flatfix_mlflow-network --rm train-model python /app/train-senario.py
+    - name: 학습 시나리오 수행
+      run: docker run --network flatfix_mlflow-network --rm train-model python train-senario.py
               
