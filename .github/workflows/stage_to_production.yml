@@ -39,10 +39,10 @@ jobs:
         docker compose up --build -d
         
     - name: 운영 모델 결정
-      run: docker run --network flatfix_mlflow-network --rm flatfix-train-model \
+      run: docker run --gpus all --network flatfix_mlflow-network --rm flatfix-train-model \
         python main.py Produce ${{ github.event.inputs.eval_metric }}
     
     - name: 운영 모델 uri 프린트
-      run: docker run --network flatfix_mlflow-network --rm flatfix-train-model \
+      run: docker run --gpus all --network flatfix_mlflow-network --rm flatfix-train-model \
         python main.py ProductionInfo
     

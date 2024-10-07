@@ -48,5 +48,5 @@ jobs:
         docker compose up --build -d
         
     - name: 학습 시나리오 수행
-      run: docker run --network flatfix_mlflow-network --rm flatfix-train-model python train_senario.py
+      run: docker run --gpus all --network flatfix_mlflow-network --rm flatfix-train-model python train_senario.py
               
