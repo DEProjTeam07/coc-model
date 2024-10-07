@@ -40,12 +40,13 @@ jobs:
           fi
           
   train-model:
-    needs: get-model-name
     runs-on: [self-hosted, linux, X64]
+    needs: get-model-name 
+    if: ${{ github.event_name != 'workflow_dispatch' || always() }} 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
+
       - name: 디버그 로그 보기
         run: |
           echo "GITHUB_ACTIONS_DEBUG=true" >> $GITHUB_ENV
@@ -64,7 +65,7 @@ jobs:
           pyenv activate modelenv-2
           pytest /home/ubuntu/flatfix/test/
 
-      - name: 모델 평가를 위한 컨테이너 환경 구축 
+      - name: 모델 평가를 위한 컨테이너 환경 구축
         run: |
           docker compose up --build -d
 
@@ -72,8 +73,7 @@ jobs:
         run: |
           docker run --network flatfix_mlflow-network --rm -it flatfix-train-model \
             python /app/main.py Train \
-            --model_type ${{ needs.get-model-name.outputs.model_name }} \
+            --model_type ${{ github.event_name != 'workflow_dispatch' && needs.get-model-name.outputs.model_name || 'default-model' }} \
             --dataset_version version_1 \
             --epochs 5 \
             --optimizer_type adam
-
