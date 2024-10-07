@@ -45,7 +45,7 @@ def load_model():
             print("Error: 모델이 존재하지 않아서 run_id를 추출하지 못했습니다.")
             return jsonify({"error": "모델을 사용할 수 없습니다."}), 500
         
-        model = mlflow.pytorch.load_model(model_uri=model_uri)  # 새로운 모델 로드
+        model = mlflow.pytorch.load_model(model_uri=model_uri, map_location=torch.device('cpu'))  # 새로운 모델 로드
         model.eval()  # 모델을 평가 모드로 설정
         current_run_id = new_run_id  # 전역 변수에 새로운 run_id 저장
     else:
