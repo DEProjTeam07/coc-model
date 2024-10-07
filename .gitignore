@@ -1,9 +1,13 @@
 # 같은 경로에 있는 logs 폴더는 github 원격 레포지토리에 올리지 않는다. 
 # 로그 내역은 민감한 기록들의 내역 이기 때문이여서 그런 것이다. 
-/Flask/log/flask_app.log
+/Flask/log/*
 
 /src/__pycache__
 
-/Streamlit/log/streamlit_app.log
+/Streamlit/log/*
 
 .env
+
+# log 폴더 자체는 Git에서 추적하도록 예외 처리
+!Flask/log/.gitkeep
+!Streamlit/log/.gitkeep
