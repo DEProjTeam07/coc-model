@@ -46,36 +46,7 @@ jobs:
       run: |
         cd /home/ubuntu/flatfix
         docker compose up --build -d
-
-    - name: 학습 도커 이미지 빌드
-      run: |
-        cd /home/ubuntu/flatfix
-        docker build -f Dockerfile.experiments -t train-model .
-    
-    - name: 학습 resnet
-      run: |
-        docker run --memory='4g' --rm train-model \
-            python /app/main.py Train \
-            --model_type resnet \
-            --dataset_version ${{ github.event.client_payload.folder_path }} \
-            --epochs 5 \
-            --optimizer_type adam
         
-    - name: 학습 efficientnet
-      run: |
-        docker run --rm train-model \
-            python /app/main.py Train \
-            --model_type efficientnet \
-            --dataset_version ${{ github.event.client_payload.folder_path }} \
-            --epochs 5 \
-            --optimizer_type adam
-
-    - name: 학습 tinyvgg
-      run: |
-        docker run --rm train-model \
-            python /app/main.py Train \
-            --model_type tinyvgg \
-            --dataset_version ${{ github.event.client_payload.folder_path }} \
-            --epochs 5 \
-            --optimizer_type adam
-
+    - name: 테스트 시나리오 수행
+      run: docker run --network flatfix_mlflow-network --rm train-model python /app/train-senario.py
+              
