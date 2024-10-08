@@ -47,6 +47,9 @@ jobs:
         cd /home/ubuntu/flatfix
         docker compose up --build -d
 
+    - name: 모델 학습 시나리오
+      run: docker run --network flatfix_mlflow-network flatfix-train-model python train_senario.py
+
     - name: stage 모델 선정 Loss 값 기준
       run: docker run --network flatfix_mlflow-network --rm flatfix-train-model python main.py Stage Loss
 
