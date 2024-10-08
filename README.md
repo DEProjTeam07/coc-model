@@ -166,7 +166,8 @@ else:
     print("최소값을 넘지 못해 모델 등록에 실패하였습니다.")
 ```
 #### 3) 하이퍼파라미터 튜닝
-매개변수로 하이퍼파라미터를 받고 그에 따라 학습을 진행합니다. 학습 전 파라미터 값이 유효한지 검증합니다.```
+매개변수로 하이퍼파라미터를 받고 그에 따라 학습을 진행합니다. 학습 전 파라미터 값이 유효한지 검증합니다.
+```
 optimizer_type_enum = getattr(OptimizerType, self.optimizer_type.upper(), None)
 if optimizer_type_enum is None:
     raise ValueError(f"지원되지 않는 옵티마이저 타입입니다.: {self.optimizer_type}")
