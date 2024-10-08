@@ -45,4 +45,16 @@ jobs:
     - name: 운영 모델 uri 프린트
       run: docker run --gpus all --network flatfix_mlflow-network --rm flatfix-train-model \
         python main.py ProductionInfo
+
+    #  3번 서버에 진입해서 Streamlit, Flask, Postgre 컨테이너 Up 하기 
+    - name: 3번 서버로 SSH 접속해서 Streamlit, Flask 컨테이너 띄우기 
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        host: ${{ secrets.SERVER_3_HOST }}         # 3번 서버의 IP나 도메인
+        username: ${{ secrets.SERVER_3_USER }}     # 3번 서버 접속 유저명
+        key: ${{ secrets.SERVER_3_SSH_KEY }}       # GitHub Secrets에 저장된 SSH 프라이빗 키
+        port: 22                                   # 기본 SSH 포트 
+        script: |  # Streamlit, Flask, Postgre 컨테이너 띄우기
+          cd /home/ubuntu/deployment/coc-model
+          docker compose up --build -d                  
     
