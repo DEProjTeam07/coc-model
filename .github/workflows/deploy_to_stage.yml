@@ -54,4 +54,5 @@ jobs:
         script: |  # Streamlit, Flask 컨테이너 띄우기
           cd /home/ubuntu/release_preparation/coc-model
           docker-compose up --build -d                                   
+
               
