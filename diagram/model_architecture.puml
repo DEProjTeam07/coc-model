@@ -1,0 +1,195 @@
+@startuml
+
+class S3ImageDatasets {
+  - dataset_version: String
+  - usage: String
+  - prefix: String
+  - bucket_name: String
+  - transform: Transform
+  - class_names: List<String>
+  - class_to_idx: Dict<String, int>
+  - s3_client: boto3.client
+  - imgs: List<Tuple<String, int>>
+  
+  + __init__(dataset_version: String, usage: String)
+  + _get_transform(usage: String): Transform
+  + _load_images(): List<Tuple<String, int>>
+  + _load_image(key: String): Image
+  + __len__(): int
+  + __getitem__(idx: int): Tuple<Image, int>
+}
+
+
+class TrainModel {
+  - model_type: ModelType
+  - model_version: String
+  - epochs: int
+  - optimizer_type: OptimizerType
+  - dataset_version: String
+  - learning_rate: float
+  - batch_size: int
+  - min_loss: float
+  - min_accuracy: float
+  - device: torch.device
+  - model: nn.Module
+  - optimizer: Optimizer
+  - train_dataset: S3ImageDatasets
+  - test_dataset: S3ImageDatasets
+  - train_loader: DataLoader
+  - test_loader: DataLoader
+  - criterion: nn.CrossEntropyLoss
+  - scheduler: lr_scheduler.StepLR
+
+  + __init__(model_type, model_version, epochs, optimizer_type, dataset_version, learning_rate, batch_size, min_loss, min_accuracy)
+  + train_model(): void
+  + test_model(): Tuple[float, float, float, float, float]
+  + run_training(): void
+}
+
+
+
+class ModelType {
+  {static} EFFICIENTNET : String = "efficientnet"
+  {static} RESNET : String = "resnet"
+  {static} TINYVGG : String = "tinyvgg"
+  {static} CNN : String = "cnn"
+}
+
+class Efficientnets {
+  - version: int
+  - effi: torchvision.models.EfficientNet
+  + __init__(version: int)
+  + forward(x): torch.Tensor
+  + get_model_name(): String
+}
+
+
+class Resnets {
+    - version: int
+    - resnet: torchvisino.models.Resnet
+    + __init__(version: int)
+    + forward(x): torch.Tenser
+    + get_model_name(): String
+}
+
+
+class TinyVGG {
+  - conv_block_1: nn.Sequential
+  - conv_block_2: nn.Sequential
+  - classifier: nn.Sequential
+  + __init__(hidden_units: int=32)
+  + forward(x: torch.Tensor): torch.Tensor
+  + get_model_name(): String
+}
+
+
+
+class CNN {
+  - block1: BasicBlock
+  - block2: BasicBlock
+  - block3: BasicBlock
+  - fc1: nn.Linear
+  - fc2: nn.Linear
+  - fc3: nn.Linear
+  - relu: nn.ReLU
+  + __init__()
+  + forward(x: torch.Tensor): torch.Tensor
+  + get_model_name(): String
+}
+
+class BasicBlock {
+  - conv1: nn.Conv2d
+  - conv2: nn.Conv2d
+  - relu: nn.ReLU
+  - pool: nn.MaxPool2d
+  + __init__(hidden_units: int, in_channels: int, out_channels: int)
+  + forward(x: torch.Tensor): torch.Tensor
+}
+
+
+
+CNN --> BasicBlock : uses
+
+
+class get_model {
+  + get_model(model_type: ModelType, version: int = None): nn.Module
+}
+
+ModelType <|-- get_model : uses
+get_model --> Efficientnets : returns
+get_model --> Resnets : returns
+get_model --> TinyVGG : returns
+get_model --> CNN : returns
+
+
+
+class OptimizerType {
+  {static} SGD: String = "sgd"
+  {static} ADAM: String = "adam"
+  {static} RMSPROP: String = "rmsprop"
+}
+
+class get_optimizer {
+  + get_optimizer(optimizer_type: OptimizerType, model: torch.nn.Module, learning_rate: float, weight_decay: float = 0.0001): torch.optim.Optimizer
+}
+
+OptimizerType <|-- get_optimizer : uses
+
+
+class validate_params {
+  + validate_params(epochs: int, learning_rate: float): void
+}
+
+
+
+class get_all_registered_models {
+  + get_all_registered_models(client: MlflowClient): List[String]
+}
+
+class production_model_alias {
+  + production_model_alias(evaluation_metric: String): void
+}
+
+
+class Model {
+  + name: String
+}
+
+class ModelVersion {
+  + version: int
+  + run_id: String
+}
+
+class Run {
+  + data: Data
+}
+
+class Data {
+  + metrics: Dict[String, float]
+}
+
+production_model_alias --> get_all_registered_models : calls
+production_model_alias --> Model : processes
+production_model_alias --> ModelVersion : processes
+production_model_alias --> Run : processes
+Run --> Data : processes
+
+class DataLoader {
+}
+
+TrainModel --> ModelType : uses
+TrainModel --> OptimizerType : uses
+TrainModel --> S3ImageDatasets : uses
+TrainModel --> DataLoader : uses
+
+
+class main {
+  + train_model(dataset_version: String, model_type: String, model_version=None, optimizer_type: String='adam', epochs: int=10, learning_rate: float=0.001, batch_size: int=16): void
+  + production_alias(param: String): void
+}
+
+main --> TrainModel : uses
+main --> production_model_alias : uses
+
+@enduml
+

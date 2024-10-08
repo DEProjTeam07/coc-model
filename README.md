@@ -317,3 +317,7 @@ on:
         python main.py ProductionInfo
     
 ```
+
+-------
+### 참고
+![model_uml_diagram](/diagram/model_architecture.png)

@@ -44,8 +44,14 @@ jobs:
 
 
     #  2번 서버에 진입해서 Streamlit, Flask 컨테이너 Up 하기 
-    #
-    #
-    #
-    #
+    - name: 2번 서버로 SSH 접속
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        host: ${{ secrets.SERVER_2_HOST }}         # 2번 서버의 IP나 도메인
+        username: ${{ secrets.SERVER_2_USER }}     # 2번 서버 접속 유저명
+        key: ${{ secrets.SERVER_2_SSH_KEY }}       # GitHub Secrets에 저장된 SSH 프라이빗 키
+        port: 22                                   # 기본 SSH 포트 
+        script: |  # Streamlit, Flask 컨테이너 띄우기
+          cd /home/ubuntu/release_preparation/coc-model
+          docker-compose up --build -d                                   
               
