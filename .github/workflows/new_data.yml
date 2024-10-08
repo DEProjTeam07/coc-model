@@ -52,3 +52,4 @@ jobs:
 
     - name: stage 모델 선정 Loss 값 기준
       run: docker run --network flatfix_mlflow-network --rm flatfix-train-model python main.py Stage Loss
+

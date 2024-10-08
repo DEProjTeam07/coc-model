@@ -1,5 +1,7 @@
 import os
+import json
 import boto3
+import random
 from PIL import Image
 from dotenv import load_dotenv
 from torch.utils.data import Dataset
@@ -25,7 +27,15 @@ class S3ImageDatasets(Dataset):
         self.class_to_idx = {class_name: idx for idx, class_name in enumerate(self.class_names)}
 
         self.s3_client = boto3.client('s3')
-        self.imgs = self._load_images()
+        self.annotation_path = f"{self.dataset_version}/{self.usage}/{self.usage}.json"
+        response = self.s3_client.get_object(Bucket=self.bucket_name, Key=self.annotation_path)
+        json_content = response['Body'].read().decode('utf-8')
+        json_data = json.loads(json_content)
+
+        self.imgs = self._load_images(json_data)
+
+        sample_size = int(len(self.imgs) * 0.5)
+        self.imgs = random.sample(self.imgs, sample_size)
 
     def _get_transform(self, usage):
         transform_list = {
@@ -50,20 +60,15 @@ class S3ImageDatasets(Dataset):
         return transform_list[usage]
 
     # 이미지 리스트 로드
-    def _load_images(self):
+    def _load_images(self, json_data):
         imgs = []
-        for class_name in self.class_names:
-            class_prefix = f"{self.prefix}{class_name}/"
-            try:
-                response = self.s3_client.list_objects(Bucket=self.bucket_name, Prefix=class_prefix)
-                if 'Contents' not in response:
-                    print(f"해당 디렉토리 {response}에 이미지가 없습니다. 버킷이 비어있는지, prefix가 정확한지 확인하십시오.")
-                    continue
-                
-                for obj in response['Contents']:
-                    imgs.append((obj['Key'], self.class_to_idx[class_name]))
-            except Exception as e:
-                print(f"S3로부터 이미지를 로드하는 중 오류 발생: {e}")
+        try:
+            for item in json_data['annotation']['data']:
+                file_path = item['FilePath']
+                label = item['label_value']
+                imgs.append((file_path, label))
+        except Exception as e:
+            print(f"Json 파일로부터 이미지 경로와 라벨을 로드하는 중 오류 발생 : {e}")
         return imgs
     
     # 로드된 이미지 리스트 중 이미지 하나씩 로드
