@@ -47,9 +47,30 @@ jobs:
         cd /home/ubuntu/flatfix
         docker compose up --build -d
 
-    - name: 모델 학습 시나리오
-      run: docker run --network flatfix_mlflow-network flatfix-train-model python train_senario.py
+    - name: 모델 학습 efficientnet
+      run: |
+        docker run --gpus all --network flatfix_mlflow-network flatfix-train-model \
+        python main.py Train \
+        --model_type efficientnet --model_version 0 \
+        --dataset_version ${{ github.event.client_payload.folder_path }}
 
+    - name: 모델 학습 resnet
+      run: |
+        docker run --gpus all --network flatfix_mlflow-network flatfix-train-model \
+        python main.py Train \
+        --model_type resnet --model_version 18 \
+        --dataset_version ${{ github.event.client_payload.folder_path }}
+        
+    - name: 모델 학습 tinyvgg
+      run: |
+        docker run --gpus all --network flatfix_mlflow-network flatfix-train-model \
+        python main.py Train \
+        --model_type tinyvgg \
+        --dataset_version ${{ github.event.client_payload.folder_path }}
+        
+
+
+        
     - name: stage 모델 선정 Loss 값 기준
       run: docker run --network flatfix_mlflow-network --rm flatfix-train-model python main.py Stage Loss
 
