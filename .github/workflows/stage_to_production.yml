@@ -40,9 +40,6 @@ jobs:
         
     - name: 운영 모델 결정
       run: docker run --gpus all --network flatfix_mlflow-network --rm flatfix-train-model python main.py Produce ${{ github.event.inputs.eval_metric }}
-    
-    - name: 운영 모델 uri 프린트
-      run: docker run --gpus all --network flatfix_mlflow-network --rm flatfix-train-model python main.py ProductionInfo
 
     #  3번 서버에 진입해서 Streamlit, Flask, Postgre 컨테이너 Up 하기 
     - name: 3번 서버로 SSH 접속해서 Streamlit, Flask 컨테이너 띄우기 
