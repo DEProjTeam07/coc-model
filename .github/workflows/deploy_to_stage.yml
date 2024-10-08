@@ -41,4 +41,11 @@ jobs:
     - name: 학습 시나리오 수행
       run: docker run --gpus all --network flatfix_mlflow-network --rm flatfix-train-model \
         python main.py Stage ${{ github.event.inputs.eval_metric }}
+
+
+    #  2번 서버에 진입해서 Streamlit, Flask 컨테이너 Up 하기 
+    #
+    #
+    #
+    #
               
