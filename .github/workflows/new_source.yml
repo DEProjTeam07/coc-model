@@ -72,7 +72,7 @@ jobs:
 
       - name: 새로운 모델 학습
         run: |
-          docker run --gpus all--network flatfix_mlflow-network --rm flatfix-train-model \
+          docker run --gpus all --network flatfix_mlflow-network --rm flatfix-train-model \
             python /app/main.py Train \
             --model_type ${{ github.event_name != 'workflow_dispatch' && needs.get-model-name.outputs.model_name || 'efficientnet' }} \
             --dataset_version version_1 \
