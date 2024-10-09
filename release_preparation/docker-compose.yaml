@@ -1,0 +1,37 @@
+services:
+  streamlit-app:
+    build:
+      context: ./Streamlit                                          # 루트 디렉터리를 ./Streamlit 폴더로 해놓는다. 
+      dockerfile: Dockerfile                                        # ./Streamlit 내부의 Dockerfile 사용
+    ports:
+      - "${STREAMLIT_PORT}:8501"                                    # 호스트의 8502 포트를 컨테이너의 8501 포트로 매핑
+    volumes:
+      - ./Streamlit/streamlit_app.py:/app/streamlit_app.py          # 로컬의 streamlit_app.py를 컨테이너로 마운트
+      - ./Streamlit/log:/app/log                                    # 로그 파일을 저장하기 위한 logs 디렉토리 마운트
+    command:                                                        # 사용자가 Streamlit 웹서비스에서 작동하다가 발생한 로그를 로그 파일로 리디렉션
+      - /bin/bash
+      - -c
+      - |
+        streamlit run /app/streamlit_app.py --server.address=0.0.0.0 >> /app/log/streamlit_app.log 2>&1    
+    restart: always                                                # 컨테이너가 중지될 때 항상 다시 시작
+
+  flask-app:
+    build:
+      context: ./Flask                                              # 루트 디렉터리를 ./Flask 폴더로 해놓는다. 
+      dockerfile: Dockerfile                                        # ./Flask 폴더의 내부의 Dockerfile 사용
+    ports:
+      - "${FLASK_PORT}:5002"                                        # 호스트의 5003 포트를 컨테이너의 5002 포트로 매핑
+    volumes:
+      - ./Flask/flask_app.py:/app/flask_app.py                      # 로컬의 flask_app.py를 컨테이너로 마운트
+      - ./Flask/communicate_mlflow.py:/app/communicate_mlflow.py    # 로컬에 있는 communicate_mlflow.py를 컨테이너로 마운트 
+      - ./Flask/src/:/app/src/                                      # 로컬에 있는 CNN, EfficientNet과 같은 모델들을 컨테이너 경로에 배치 
+      - ./Flask/templates/index.html:/app/templates/index.html                            # 로컬에 있는 index.html을 컨테이너 상 경로에 배치 
+      - ./Flask/log:/app/log                                        # 로그 파일을 저장하기 위한 logs 디렉토리 마운트
+    command:                                                        # Flask 실행 명령어와 로그 리디렉션
+      - /bin/bash
+      - -c
+      - |
+        python /app/flask_app.py >> /app/log/flask_app.log 2>&1
+    restart: always    
+
+
