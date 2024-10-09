@@ -118,3 +118,13 @@ def produce_alias(evaluation_metric):
             print(model_uri)
             mlflow.register_model(model_uri, name='Production',
                                   tags={'model_name': model_name,'evaluation_metric': evaluation_metric})
+            
+    final_version = client.search_model_versions("name='Production'")
+
+    if len(final_version) > 1:
+        print("운영 모델이 2개 이상입니다.")
+    else:
+        run_id = final_version[0].run_id
+        model_name = final_version[0].tags.get('model_name')
+        model_uri=f"runs:/{run_id}/{model_name}"
+        print(model_uri)
