@@ -52,7 +52,7 @@ jobs:
         port: 22                                   # 기본 SSH 포트 
         script: |  # Streamlit, Flask 컨테이너 띄우기
           cd /home/ubuntu/release_preparation/coc-model/release_preparation
-          docker-compose up --build -d                                   
+          docker compose up --build -d                                   
 
 
               
