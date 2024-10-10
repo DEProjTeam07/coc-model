@@ -1,0 +1,5 @@
+streamlit==1.26.0         # 최신 버전 기준
+requests==2.31.0          # 안정적인 최신 버전
+psycopg2-binary==2.9.8    # PostgreSQL 연동 패키지
+Pillow==9.5.0
+
